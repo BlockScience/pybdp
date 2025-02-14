@@ -51,6 +51,14 @@ class Processor:
             self.terminals, self.name, self.parent.codomain, self.parent.name
         )
 
+    def __repr__(self):
+        return "< Processor ID: {} Name: {} {}->{}>".format(
+            self.id,
+            self.name,
+            [x.name for x in self.ports],
+            [x.name for x in self.terminals],
+        )
+
 
 def load_processor(json, blocks_map, spaces_map):
     return Processor(json, blocks_map, spaces_map)

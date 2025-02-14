@@ -24,9 +24,13 @@ class Project:
             json["Workbench"], self.blocks_map, self.spaces_map
         )
 
-        self.processors = []
-        self.wires = []
-        self.systems = []
+        self.processors = self.workbench.processors
+        self.wires = self.workbench.wires
+        self.systems = self.workbench.systems
+
+        self.processors_map = self.workbench.processors_map
+        self.wires_map = self.workbench.wires_map
+        self.systems_map = self.workbench.systems_map
 
         self._validate_unique_ids()
 
