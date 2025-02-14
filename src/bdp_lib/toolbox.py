@@ -8,6 +8,8 @@ class Toolbox:
         self.blocks = [load_block(block) for block in json["Blocks"]]
         self.spaces = [load_space(space) for space in json["Spaces"]]
 
+        print("Replace spaces references with a _function")
+
 
 def load_toolbox(json: dict):
     return Toolbox(json)

@@ -12,6 +12,8 @@ class Project:
         self.blocks = self.toolbox.blocks
         self.spaces = self.toolbox.spaces
 
+        print("Implement validation that there are no duplicate IDs")
+
 
 def load_project(json: dict):
     validate(json, schema)
