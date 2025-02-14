@@ -9,7 +9,7 @@ class Project:
     def __init__(self, json: dict):
         self.raw_data = json
         self.toolbox = load_toolbox(json["Toolbox"])
-        self.workbench = load_workbench(json["Toolbox"])
+        self.workbench = load_workbench(json["Workbench"])
         self.blocks = self.toolbox.blocks
         self.spaces = self.toolbox.spaces
 
