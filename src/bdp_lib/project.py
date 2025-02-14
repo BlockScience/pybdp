@@ -12,6 +12,11 @@ class Project:
         self.blocks = self.toolbox.blocks
         self.spaces = self.toolbox.spaces
 
+        # Bring in mapping
+        self.blocks_map = self.toolbox.blocks_map
+        self.spaces_map = self.toolbox.spaces_map
+        self.toolbox_map = self.toolbox.toolbox_map
+
         print("Implement validation that there are no duplicate IDs")
 
 
