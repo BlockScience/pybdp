@@ -11,7 +11,7 @@ class Processor:
 
         self._load_parent(json["Parent"], blocks_map)
         self.ports = self._load_ports(json["Ports"], spaces_map)
-        self.terminals = self._load_terminals(spaces_map)
+        self.terminals = self._load_terminals(json["Terminals"], spaces_map)
 
     def _load_parent(self, parent, blocks_map):
         assert (
@@ -36,8 +36,20 @@ class Processor:
             self.ports, self.name, self.parent.domain, self.parent.name
         )
 
-    def _load_terminals(self, spaces_map):
-        return None
+    def _load_terminals(self, terminals, spaces_map):
+        bad_terminals = [space for space in terminals if space not in spaces_map]
+        assert (
+            len(bad_terminals) == 0
+        ), "The processor {} references terminal IDs of {} which are not valid port IDs".format(
+            self.name, bad_terminals
+        )
+        self.terminals = [spaces_map[terminal] for terminal in terminals]
+
+        assert (
+            self.terminals == self.parent.codomain
+        ), "The terminals of {} for the processor {} do not match the codomain of {} that its parent block {} has".format(
+            self.terminals, self.name, self.parent.codomain, self.parent.name
+        )
 
 
 def load_processor(json, blocks_map, spaces_map):
