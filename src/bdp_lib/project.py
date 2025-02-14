@@ -1,10 +1,14 @@
 from jsonschema import validate
 from .schema import schema
+from .toolbox import load_toolbox
+from .workbench import load_workbench
 
 
 class Project:
     def __init__(self, json: dict):
         self.raw_data = json
+        self.toolbox = load_toolbox(json["Toolbox"])
+        self.workbench = load_workbench(json["Toolbox"])
 
 
 def load_project(json: dict):
