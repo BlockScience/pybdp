@@ -25,10 +25,13 @@ class Workbench:
         ]
         duplicate_wires = find_duplicates(self.wires)
         assert len(duplicate_wires) == 0, f"Duplicate wire IDs found: {duplicate_wires}"
-        self.wire_map = {wire.id: wire for wire in self.wires}
+        self.wires_map = {wire.id: wire for wire in self.wires}
 
         # Load systems
-        self.systems = [load_system(system) for system in json["Systems"]]
+        self.systems = [
+            load_system(system, self.processors_map, self.wires_map)
+            for system in json["Systems"]
+        ]
 
         print("Work bench ID validation")
 
