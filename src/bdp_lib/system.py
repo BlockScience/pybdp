@@ -30,10 +30,22 @@ class System:
         duplicate_processors = find_duplicates(self.processors)
         assert (
             len(duplicate_processors) == 0
-        ), f"Duplicate references to the same processor IDs found (only load processors once in a system): {duplicate_processors}"
+        ), f"Duplicate references to the same processor IDs found in system {self.name} (only load processors once in a system): {duplicate_processors}"
 
     def _load_wires(self, wires, wires_map):
-        pass
+        bad_wires = [wire for wire in wires if wire not in wires_map]
+        assert (
+            len(bad_wires) == 0
+        ), "The system {} references wire IDs of {} which are not valid wire IDs".format(
+            self.name, bad_wires
+        )
+        self.wires = [wires_map[wire] for wire in wires]
+
+        # CHECK DUPLICATES
+        duplicate_wire = find_duplicates(self.wires)
+        assert (
+            len(duplicate_wire) == 0
+        ), f"Duplicate references to the same wire IDs found in system {self.name} (only load wires once in a system): {duplicate_wire}"
 
     def _check_ports(self):
         # Check only one wire into each port and warn if any ports are not filled
