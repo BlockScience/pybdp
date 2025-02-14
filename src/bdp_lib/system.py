@@ -48,8 +48,16 @@ class System:
         ), f"Duplicate references to the same wire IDs found in system {self.name} (only load wires once in a system): {duplicate_wire}"
 
     def _check_ports(self):
-        # Check only one wire into each port and warn if any ports are not filled
-        pass
+        # Check only one wire into each port
+        filled_ports = set()
+        for wire in self.wires:
+            payload = (wire.target["Processor"].id, wire.target["Index"])
+            assert (
+                payload not in filled_ports
+            ), "For system {} there are multiple wires pointing into the processor ID + index of {}, {}".format(
+                self.name, payload[0], payload[1]
+            )
+            filled_ports.add(payload)
 
     def __repr__(self):
         return "< System Name: {} ID: {} Processors: {} Wires: {} >".format(
