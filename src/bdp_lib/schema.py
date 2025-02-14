@@ -1,8 +1,9 @@
-import pathlib
 import json
+from pathlib import Path
+import jsonref
 
-current_path = pathlib.Path(__file__).parent.resolve()
-with open("{}/schemas/bdp.schema.json".format(current_path), "r") as f:
-    f = f.read()
-f = f.replace("./bdp.schema.json/", "")
-schema = json.loads(f)
+current_path = Path(__file__).parent.resolve()
+schema_path = Path("{}/schemas/bdp.schema.json".format(current_path)).absolute()
+with open(schema_path, "r") as file:
+    schema = jsonref.load(file, base_uri=schema_path.as_uri())
+# f = f.replace("./bdp.schema.json/", "")
