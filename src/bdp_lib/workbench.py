@@ -12,6 +12,8 @@ class Workbench:
         self.wires = [load_wire(wire) for wire in json["Wires"]]
         self.systems = [load_system(system) for system in json["Systems"]]
 
+        print("Work bench ID validation")
+
 
 def load_workbench(json: dict):
     return Workbench(json)

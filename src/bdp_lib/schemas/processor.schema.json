@@ -70,7 +70,7 @@
       "ID",
       "Name",
       "Parent",
-      "Port",
+      "Ports",
       "Terminals"
     ]
   }
