@@ -9,6 +9,8 @@ class Project:
         self.raw_data = json
         self.toolbox = load_toolbox(json["Toolbox"])
         self.workbench = load_workbench(json["Toolbox"])
+        self.blocks = self.toolbox.blocks
+        self.spaces = self.toolbox.spaces
 
 
 def load_project(json: dict):
