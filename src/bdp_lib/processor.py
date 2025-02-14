@@ -10,8 +10,8 @@ class Processor:
             self.description = None
 
         self._load_parent(json["Parent"], blocks_map)
-        self.ports = self._load_ports(json["Ports"], spaces_map)
-        self.terminals = self._load_terminals(json["Terminals"], spaces_map)
+        self._load_ports(json["Ports"], spaces_map)
+        self._load_terminals(json["Terminals"], spaces_map)
 
     def _load_parent(self, parent, blocks_map):
         assert (

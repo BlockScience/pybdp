@@ -20,12 +20,24 @@ class Wire:
         ), "The source processor ID of {} is not valid for wire of {}".format(
             source["Processor"], self.id
         )
+        processor = processors_map[source["Processor"]]
+        assert source["Index"] < len(
+            processor.terminals
+        ), "Index of {} is out of range for the 0-indexed array of terminals in {} (length={}). Error encountered on wire {}.".format(
+            source["Index"], processor.name, len(processor.terminals), self.id
+        )
 
     def _load_target(self, target, processors_map):
         assert (
             target["Processor"] in processors_map
         ), "The target processor ID of {} is not valid for wire of {}".format(
             target["Processor"], self.id
+        )
+        processor = processors_map[target["Processor"]]
+        assert target["Index"] < len(
+            processor.ports
+        ), "Index of {} is out of range for the 0-indexed array of terminals in {} (length={}). Error encountered on wire {}.".format(
+            target["Index"], processor.name, len(processor.ports), self.id
         )
 
     def __repr__(self):
