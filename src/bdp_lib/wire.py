@@ -33,6 +33,7 @@ class Wire:
         ), "The terminal space {} of processor {} does not match the wire space {} for wire {}".format(
             a, processor.name, b, self.name
         )
+        self.source = {"Processor": processor, "Index": source["Index"]}
 
     def _load_target(self, target, processors_map):
         assert (
@@ -55,9 +56,16 @@ class Wire:
             a, processor.name, b, self.name
         )
 
+        self.target = {"Processor": processor, "Index": target["Index"]}
+
     def __repr__(self):
-        return "< Wire ID: {} Space: {} Source: Target: >".format(
-            self.id, self.parent.name
+        return "< Wire ID: {} Space: {} Source: ({}, {}) Target: ({}, {}) >".format(
+            self.id,
+            self.parent.name,
+            self.source["Processor"].name,
+            self.source["Index"],
+            self.target["Processor"].name,
+            self.target["Index"],
         )
 
 
