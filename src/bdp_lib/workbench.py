@@ -4,10 +4,11 @@ from .system import load_system
 
 
 class Workbench:
-    def __init__(self, json: dict):
+    def __init__(self, json: dict, blocks_map, spaces_map):
         self.raw_data = json
         self.processors = [
-            load_processor(processor) for processor in json["Processors"]
+            load_processor(processor, blocks_map, spaces_map)
+            for processor in json["Processors"]
         ]
         self.wires = [load_wire(wire) for wire in json["Wires"]]
         self.systems = [load_system(system) for system in json["Systems"]]
@@ -15,5 +16,5 @@ class Workbench:
         print("Work bench ID validation")
 
 
-def load_workbench(json: dict):
-    return Workbench(json)
+def load_workbench(json: dict, blocks_map, spaces_map):
+    return Workbench(json, blocks_map, spaces_map)

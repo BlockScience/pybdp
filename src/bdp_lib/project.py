@@ -8,19 +8,25 @@ from .convenience import find_duplicates
 class Project:
     def __init__(self, json: dict):
         self.raw_data = json
+
+        # Load toolbox
         self.toolbox = load_toolbox(json["Toolbox"])
-        self.workbench = load_workbench(json["Workbench"])
+
+        # Bring in mapping and objects to the project level
         self.blocks = self.toolbox.blocks
         self.spaces = self.toolbox.spaces
+        self.blocks_map = self.toolbox.blocks_map
+        self.spaces_map = self.toolbox.spaces_map
+        self.toolbox_map = self.toolbox.toolbox_map
+
+        # Load workbench
+        self.workbench = load_workbench(
+            json["Workbench"], self.blocks_map, self.spaces_map
+        )
 
         self.processors = []
         self.wires = []
         self.systems = []
-
-        # Bring in mapping
-        self.blocks_map = self.toolbox.blocks_map
-        self.spaces_map = self.toolbox.spaces_map
-        self.toolbox_map = self.toolbox.toolbox_map
 
         self._validate_unique_ids()
 
