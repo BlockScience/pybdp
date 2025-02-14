@@ -10,7 +10,7 @@ class Workbench:
             load_processor(processor, blocks_map, spaces_map)
             for processor in json["Processors"]
         ]
-        self.wires = [load_wire(wire) for wire in json["Wires"]]
+        self.wires = [load_wire(wire, blocks_map, spaces_map) for wire in json["Wires"]]
         self.systems = [load_system(system) for system in json["Systems"]]
 
         print("Work bench ID validation")
