@@ -26,6 +26,13 @@ class Wire:
         ), "Index of {} is out of range for the 0-indexed array of terminals in {} (length={}). Error encountered on wire {}.".format(
             source["Index"], processor.name, len(processor.terminals), self.id
         )
+        a = processor.terminals[source["Index"]]
+        b = self.parent
+        assert (
+            a == b
+        ), "The terminal space {} of processor {} does not match the wire space {} for wire {}".format(
+            a, processor.name, b, self.name
+        )
 
     def _load_target(self, target, processors_map):
         assert (
@@ -38,6 +45,14 @@ class Wire:
             processor.ports
         ), "Index of {} is out of range for the 0-indexed array of terminals in {} (length={}). Error encountered on wire {}.".format(
             target["Index"], processor.name, len(processor.ports), self.id
+        )
+
+        a = processor.ports[target["Index"]]
+        b = self.parent
+        assert (
+            a == b
+        ), "The port space {} of processor {} does not match the wire space {} for wire {}".format(
+            a, processor.name, b, self.name
         )
 
     def __repr__(self):
