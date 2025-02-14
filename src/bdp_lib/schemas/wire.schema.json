@@ -54,9 +54,7 @@
     "required": [
       "ID",
       "Parent",
-      "SourceBlock",
-      "TargetBlock",
-      "SourceIndex",
-      "TargetIndex"
+      "Source",
+      "Target"
     ]
   }

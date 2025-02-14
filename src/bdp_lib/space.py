@@ -8,6 +8,9 @@ class Space:
         else:
             self.description = None
 
+    def __repr__(self):
+        return "< Space ID: {} Name: {} >".format(self.id, self.name)
+
 
 def load_space(json: dict):
     return Space(json)

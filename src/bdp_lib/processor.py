@@ -10,8 +10,8 @@ class Processor:
             self.description = None
 
         self._load_parent(json["Parent"], blocks_map)
-        self.ports = self._load_ports(json["Ports"], spaces_map)
-        self.terminals = self._load_terminals(json["Terminals"], spaces_map)
+        self._load_ports(json["Ports"], spaces_map)
+        self._load_terminals(json["Terminals"], spaces_map)
 
     def _load_parent(self, parent, blocks_map):
         assert (
@@ -49,6 +49,14 @@ class Processor:
             self.terminals == self.parent.codomain
         ), "The terminals of {} for the processor {} do not match the codomain of {} that its parent block {} has".format(
             self.terminals, self.name, self.parent.codomain, self.parent.name
+        )
+
+    def __repr__(self):
+        return "< Processor ID: {} Name: {} {}->{}>".format(
+            self.id,
+            self.name,
+            [x.name for x in self.ports],
+            [x.name for x in self.terminals],
         )
 
 
