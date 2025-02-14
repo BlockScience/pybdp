@@ -51,6 +51,14 @@ class System:
         # Check only one wire into each port and warn if any ports are not filled
         pass
 
+    def __repr__(self):
+        return "< System Name: {} ID: {} Processors: {} Wires: {} >".format(
+            self.name,
+            self.id,
+            [x.name for x in self.processors],
+            [x.id for x in self.wires],
+        )
+
 
 def load_system(json, processors_map, wires_map):
     return System(json, processors_map, wires_map)

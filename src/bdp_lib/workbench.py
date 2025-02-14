@@ -41,7 +41,7 @@ Processors: {}
 Wires: {}
 Systems: {} >""".format(
             [x.name for x in self.processors],
-            [x.name for x in self.wires],
+            [x.id for x in self.wires],
             [x.name for x in self.systems],
         )
 
