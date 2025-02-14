@@ -9,8 +9,8 @@ class Processor:
         else:
             self.description = None
 
-        self.parent = self._load_parent(json["Parent"], blocks_map)
-        self.ports = self._load_ports(spaces_map)
+        self._load_parent(json["Parent"], blocks_map)
+        self.ports = self._load_ports(json["Ports"], spaces_map)
         self.terminals = self._load_terminals(spaces_map)
 
     def _load_parent(self, parent, blocks_map):
@@ -19,10 +19,22 @@ class Processor:
         ), "The parent block ID of {} is not valid for processor of {}".format(
             parent, self.name
         )
-        return None
+        self.parent = blocks_map[parent]
 
-    def _load_ports(self, spaces_map):
-        return None
+    def _load_ports(self, ports, spaces_map):
+        bad_ports = [space for space in ports if space not in spaces_map]
+        assert (
+            len(bad_ports) == 0
+        ), "The processor {} references port IDs of {} which are not valid port IDs".format(
+            self.name, bad_ports
+        )
+        self.ports = [spaces_map[port] for port in ports]
+
+        assert (
+            self.ports == self.parent.domain
+        ), "The ports of {} for the processor {} do not match the domain of {} that its parent block {} has".format(
+            self.ports, self.name, self.parent.domain, self.parent.name
+        )
 
     def _load_terminals(self, spaces_map):
         return None
