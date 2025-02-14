@@ -31,7 +31,7 @@ class Wire:
         assert (
             a == b
         ), "The terminal space {} of processor {} does not match the wire space {} for wire {}".format(
-            a, processor.name, b, self.name
+            a, processor.name, b, self.id
         )
         self.source = {"Processor": processor, "Index": source["Index"]}
 
@@ -53,7 +53,7 @@ class Wire:
         assert (
             a == b
         ), "The port space {} of processor {} does not match the wire space {} for wire {}".format(
-            a, processor.name, b, self.name
+            a, processor.name, b, self.id
         )
 
         self.target = {"Processor": processor, "Index": target["Index"]}
