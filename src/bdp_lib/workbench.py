@@ -16,11 +16,13 @@ class Workbench:
         print("Work bench ID validation")
 
     def __repr__(self):
-        return """< Workbench
+        return """<Workbench
 Processors: {}
 Wires: {}
 Systems: {} >""".format(
-            self.processors, self.wires, self.systems
+            [x.name for x in self.processors],
+            [x.name for x in self.wires],
+            [x.name for x in self.systems],
         )
 
 

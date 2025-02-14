@@ -54,7 +54,8 @@ class Toolbox:
         return """< Toolbox
 Blocks: {}
 Spaces: {} >""".format(
-            self.blocks, self.spaces
+            [x.name for x in self.blocks],
+            [x.name for x in self.spaces],
         )
 
 
