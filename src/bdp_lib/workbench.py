@@ -20,9 +20,7 @@ class Workbench:
 Processors: {}
 Wires: {}
 Systems: {} >""".format(
-            [x.name for x in self.processors],
-            [x.name for x in self.wires],
-            [x.name for x in self.systems],
+            self.processors, self.wires, self.systems
         )
 
 
