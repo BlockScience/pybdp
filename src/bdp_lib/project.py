@@ -38,6 +38,18 @@ class Project:
             len(duplicates) == 0
         ), f"Overlapping IDs between the toolbox and workbench found: {duplicates}"
 
+    def __repr__(self):
+        return """< Project
+Toolbox:
+
+{}
+
+Workbench:
+
+{} >""".format(
+            self.toolbox, self.workbench
+        )
+
 
 def load_project(json: dict):
     validate(json, schema)

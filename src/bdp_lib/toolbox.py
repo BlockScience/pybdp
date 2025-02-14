@@ -50,6 +50,14 @@ class Toolbox:
             block.domain = [self.spaces_map[space] for space in block.domain]
             block.codomain = [self.spaces_map[space] for space in block.codomain]
 
+    def __repr__(self):
+        return """< Toolbox
+Blocks: {}
+Spaces: {} >""".format(
+            [x.name for x in self.blocks],
+            [x.name for x in self.spaces],
+        )
+
 
 def load_toolbox(json: dict):
     return Toolbox(json)

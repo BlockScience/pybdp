@@ -15,6 +15,16 @@ class Workbench:
 
         print("Work bench ID validation")
 
+    def __repr__(self):
+        return """< Workbench
+Processors: {}
+Wires: {}
+Systems: {} >""".format(
+            [x.name for x in self.processors],
+            [x.name for x in self.wires],
+            [x.name for x in self.systems],
+        )
+
 
 def load_workbench(json: dict, blocks_map, spaces_map):
     return Workbench(json, blocks_map, spaces_map)
