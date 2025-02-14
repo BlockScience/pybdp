@@ -1,3 +1,6 @@
+from .convenience import find_duplicates
+
+
 class System:
     def __init__(self, json: dict, processors_map: dict, wires_map: dict):
         self.raw_data = json
@@ -24,6 +27,10 @@ class System:
         self.processors = [processors_map[processor] for processor in processors]
 
         # CHECK DUPLICATES
+        duplicate_processors = find_duplicates(self.processors)
+        assert (
+            len(duplicate_processors) == 0
+        ), f"Duplicate references to the same processor IDs found (only load processors once in a system): {duplicate_processors}"
 
     def _load_wires(self, wires, wires_map):
         pass
