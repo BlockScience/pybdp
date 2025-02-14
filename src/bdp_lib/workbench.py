@@ -32,8 +32,18 @@ class Workbench:
             load_system(system, self.processors_map, self.wires_map)
             for system in json["Systems"]
         ]
+        duplicate_systems = find_duplicates(self.systems)
+        assert (
+            len(duplicate_systems) == 0
+        ), f"Duplicate system IDs found: {duplicate_systems}"
+        self.systems_map = {system.id: system for system in self.systems}
 
-        print("Work bench ID validation")
+        # Validate no overlapping IDs
+
+        duplicates = find_duplicates(self.wires + self.systems + self.processors)
+        assert (
+            len(duplicates) == 0
+        ), f"Overlapping IDs for processors/wires/systems found: {duplicates}"
 
     def __repr__(self):
         return """<Workbench
