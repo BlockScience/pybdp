@@ -1,5 +1,6 @@
 from .space import load_space
 from .block import load_block
+from .convenience import find_duplicates
 
 
 class Toolbox:
@@ -8,7 +9,28 @@ class Toolbox:
         self.blocks = [load_block(block) for block in json["Blocks"]]
         self.spaces = [load_space(space) for space in json["Spaces"]]
 
+        self._validate_unique_ids()
+
+        self.blocks_map = {block.id: block for block in self.blocks}
+        self.spaces_map = {space.id: space for space in self.spaces}
+
         print("Replace spaces references with a _function")
+
+    def _validate_unique_ids(self):
+        duplicate_blocks = find_duplicates(self.blocks)
+        assert (
+            len(duplicate_blocks) == 0
+        ), f"Duplicate block IDs found: {duplicate_blocks}"
+
+        duplicate_spaces = find_duplicates(self.spaces)
+        assert (
+            len(duplicate_spaces) == 0
+        ), f"Duplicate space IDs found: {duplicate_spaces}"
+
+        duplicate_both = find_duplicates(self.blocks + self.spaces)
+        assert (
+            len(duplicate_both) == 0
+        ), f"Overlapping block and space IDs found: {duplicate_both}"
 
 
 def load_toolbox(json: dict):
