@@ -9,11 +9,16 @@ class Processor:
         else:
             self.description = None
 
-        self.parent = self._load_parent(blocks_map)
+        self.parent = self._load_parent(json["Parent"], blocks_map)
         self.ports = self._load_ports(spaces_map)
         self.terminals = self._load_terminals(spaces_map)
 
-    def _load_parent(self, blocks_map):
+    def _load_parent(self, parent, blocks_map):
+        assert (
+            parent in blocks_map
+        ), "The parent block ID of {} is not valid for processor of {}".format(
+            parent, self.name
+        )
         return None
 
     def _load_ports(self, spaces_map):
