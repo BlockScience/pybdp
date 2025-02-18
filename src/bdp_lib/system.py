@@ -87,6 +87,14 @@ class System:
             [x.id for x in self.wires],
         )
 
+    def get_open_ports(self):
+        out = []
+        for processor in self.processor_ports_map:
+            for i, port_list in enumerate(self.processor_ports_map[processor]):
+                if len(port_list) == 0:
+                    out.append([processor, i, processor.ports[i]])
+        return out
+
     def make_processor_lazy(self):
         open_ports = self.get_open_ports()
         open_terminals = self.get_available_terminals(open_only=True)
