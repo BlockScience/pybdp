@@ -116,19 +116,44 @@ class System:
         domain = list(map(lambda x: x[2].id, ports))
         codomain = list(map(lambda x: x[2].id, terminals))
 
+        block_id = self.id + "-CP Block"
+        processor_id = self.id + "-CP"
+
         block_scaffold = {
-            "ID": self.id + "-CP",
-            "Name": self.name + "-CP",
+            "ID": block_id,
+            "Name": self.name + "-CP Block",
             "Description": "A lazy loaded composite processor for {}".format(self.name),
             "Domain": domain,
             "Codomain": codomain,
         }
+
+        wires_scaffold = []
+        for i, d in enumerate(ports):
+            wires_scaffold.append(
+                {
+                    "ID": processor_id + "-P{}".format(i),
+                    "Parent": d[2].id,
+                    "Source": {"Processor": processor_id, "Index": i},
+                    "Target": {"Processor": d[0].id, "Index": d[1]},
+                }
+            )
+        for i, d in enumerate(terminals):
+            wires_scaffold.append(
+                {
+                    "ID": processor_id + "-T{}".format(i),
+                    "Parent": d[2].id,
+                    "Source": {"Processor": d[0].id, "Index": d[1]},
+                    "Target": {"Processor": processor_id, "Index": i},
+                }
+            )
 
         print("-----Add the following to your JSON-----")
         print()
         print("Add to blocks:")
         pprint(block_scaffold)
         print()
+        print("Add to wirings:")
+        pprint(wires_scaffold)
 
 
 def load_system(json, processors_map, wires_map):
