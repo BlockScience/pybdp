@@ -1,4 +1,5 @@
 from .convenience import find_duplicates
+from pprint import pprint
 
 
 class System:
@@ -13,6 +14,7 @@ class System:
 
         self._load_processors(json["Processors"], processors_map)
         self._load_wires(json["Wires"], wires_map)
+        self._add_processor_port_terminal_maps()
         self._check_ports()
 
     def _load_processors(self, processors, processors_map):
@@ -31,6 +33,25 @@ class System:
         assert (
             len(duplicate_processors) == 0
         ), f"Duplicate references to the same processor IDs found in system {self.name} (only load processors once in a system): {duplicate_processors}"
+
+    def _add_processor_port_terminal_maps(self):
+        self.processor_ports_map = {}
+        self.processor_terminals_map = {}
+        for processor in self.processors:
+            self.processor_ports_map[processor] = [
+                [] for _ in range(len(processor.ports))
+            ]
+            self.processor_terminals_map[processor] = [
+                [] for _ in range(len(processor.terminals))
+            ]
+
+        for wire in self.wires:
+            self.processor_terminals_map[wire.source["Processor"]][
+                wire.source["Index"]
+            ].append(wire)
+            self.processor_ports_map[wire.target["Processor"]][
+                wire.target["Index"]
+            ].append(wire)
 
     def _load_wires(self, wires, wires_map):
         bad_wires = [wire for wire in wires if wire not in wires_map]
@@ -66,6 +87,93 @@ class System:
             [x.name for x in self.processors],
             [x.id for x in self.wires],
         )
+
+    def get_open_ports(self):
+        out = []
+        for processor in self.processor_ports_map:
+            for i, port_list in enumerate(self.processor_ports_map[processor]):
+                if len(port_list) == 0:
+                    out.append([processor, i, processor.ports[i]])
+        return out
+
+    def get_available_terminals(self, open_only=False):
+        out = []
+        for processor in self.processor_terminals_map:
+            for i, terminal_list in enumerate(self.processor_terminals_map[processor]):
+                if open_only:
+                    if len(terminal_list) == 0:
+                        out.append([processor, i, processor.terminals[i]])
+                else:
+                    out.append([processor, i, processor.terminals[i]])
+        return out
+
+    def make_processor_lazy(self):
+        # Get open ports and terminals
+        ports = self.get_open_ports()
+        terminals = self.get_available_terminals(open_only=True)
+
+        # Get spaces
+        domain = list(map(lambda x: x[2].id, ports))
+        codomain = list(map(lambda x: x[2].id, terminals))
+
+        block_id = self.id + "-CP Block"
+        processor_id = self.id + "-CP"
+
+        block_scaffold = {
+            "ID": block_id,
+            "Name": self.name + "-CP Block",
+            "Description": "A lazy loaded composite processor block for {}".format(
+                self.name
+            ),
+            "Domain": domain,
+            "Codomain": codomain,
+        }
+
+        wires_scaffold = []
+        for i, d in enumerate(ports):
+            wires_scaffold.append(
+                {
+                    "ID": processor_id + "-P{}".format(i),
+                    "Parent": d[2].id,
+                    "Source": {"Processor": processor_id, "Index": i},
+                    "Target": {"Processor": d[0].id, "Index": d[1]},
+                }
+            )
+        for i, d in enumerate(terminals):
+            wires_scaffold.append(
+                {
+                    "ID": processor_id + "-T{}".format(i),
+                    "Parent": d[2].id,
+                    "Source": {"Processor": d[0].id, "Index": d[1]},
+                    "Target": {"Processor": processor_id, "Index": i},
+                }
+            )
+
+        processor_scaffold = {
+            "ID": processor_id,
+            "Name": self.name + "-CP",
+            "Description": "A lazy loaded composite processor block for {}".format(
+                self.name
+            ),
+            "Parent": block_id,
+            "Ports": domain,
+            "Terminals": codomain,
+            "Subsystem": {
+                "System ID": self.id,
+                "Wires": [x["ID"] for x in wires_scaffold],
+            },
+        }
+
+        print("-----Add the following to your JSON-----")
+        print()
+        print("Add to blocks:")
+        pprint(block_scaffold)
+        print()
+        print("Add to wirings:")
+        pprint(wires_scaffold)
+        print()
+        print("Add to processors:")
+        pprint(processor_scaffold)
 
 
 def load_system(json, processors_map, wires_map):
