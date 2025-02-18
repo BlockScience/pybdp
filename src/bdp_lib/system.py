@@ -122,7 +122,9 @@ class System:
         block_scaffold = {
             "ID": block_id,
             "Name": self.name + "-CP Block",
-            "Description": "A lazy loaded composite processor for {}".format(self.name),
+            "Description": "A lazy loaded composite processor block for {}".format(
+                self.name
+            ),
             "Domain": domain,
             "Codomain": codomain,
         }
@@ -147,6 +149,21 @@ class System:
                 }
             )
 
+        processor_scaffold = {
+            "ID": processor_id,
+            "Name": self.name + "-CP",
+            "Description": "A lazy loaded composite processor block for {}".format(
+                self.name
+            ),
+            "Parent": block_id,
+            "Ports": domain,
+            "Terminals": codomain,
+            "Subsystem": {
+                "System ID": self.id,
+                "Wires": [x["ID"] for x in wires_scaffold],
+            },
+        }
+
         print("-----Add the following to your JSON-----")
         print()
         print("Add to blocks:")
@@ -154,6 +171,9 @@ class System:
         print()
         print("Add to wirings:")
         pprint(wires_scaffold)
+        print()
+        print("Add to processors:")
+        pprint(processor_scaffold)
 
 
 def load_system(json, processors_map, wires_map):
