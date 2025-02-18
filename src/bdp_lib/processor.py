@@ -59,6 +59,9 @@ class Processor:
             [x.name for x in self.terminals],
         )
 
+    def get_shape(self):
+        return self.parent
+
 
 def load_processor(json, blocks_map, spaces_map):
     return Processor(json, blocks_map, spaces_map)
