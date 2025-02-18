@@ -12,8 +12,8 @@ class System:
             self.description = None
 
         self._load_processors(json["Processors"], processors_map)
-        self._add_processor_port_terminal_maps()
         self._load_wires(json["Wires"], wires_map)
+        self._add_processor_port_terminal_maps()
         self._check_ports()
 
     def _load_processors(self, processors, processors_map):
@@ -37,12 +37,20 @@ class System:
         self.processor_ports_map = {}
         self.processor_terminals_map = {}
         for processor in self.processors:
-            self.processor_ports_map[processor.id] = [
+            self.processor_ports_map[processor] = [
                 [] for _ in range(len(processor.ports))
             ]
-            self.processor_terminals_map[processor.id] = [
+            self.processor_terminals_map[processor] = [
                 [] for _ in range(len(processor.terminals))
             ]
+
+        for wire in self.wires:
+            self.processor_terminals_map[wire.source["Processor"]][
+                wire.source["Index"]
+            ].append(wire)
+            self.processor_ports_map[wire.target["Processor"]][
+                wire.target["Index"]
+            ].append(wire)
 
     def _load_wires(self, wires, wires_map):
         bad_wires = [wire for wire in wires if wire not in wires_map]
