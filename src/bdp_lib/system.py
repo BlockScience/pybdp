@@ -67,6 +67,11 @@ class System:
             [x.id for x in self.wires],
         )
 
+    def make_processor_lazy(self):
+        open_ports = self.get_open_ports()
+        open_terminals = self.get_available_terminals(open_only=True)
+        print(open_ports, open_terminals)
+
 
 def load_system(json, processors_map, wires_map):
     return System(json, processors_map, wires_map)
