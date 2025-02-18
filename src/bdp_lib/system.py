@@ -95,6 +95,17 @@ class System:
                     out.append([processor, i, processor.ports[i]])
         return out
 
+    def get_available_terminals(self, open_only=False):
+        out = []
+        for processor in self.processor_terminals_map:
+            for i, terminal_list in enumerate(self.processor_terminals_map[processor]):
+                if open_only:
+                    if len(terminal_list) == 0:
+                        out.append([processor, i, processor.terminals[i]])
+                else:
+                    out.append([processor, i, processor.terminals[i]])
+        return out
+
     def make_processor_lazy(self):
         open_ports = self.get_open_ports()
         open_terminals = self.get_available_terminals(open_only=True)
