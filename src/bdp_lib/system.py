@@ -12,6 +12,7 @@ class System:
             self.description = None
 
         self._load_processors(json["Processors"], processors_map)
+        self._add_processor_port_terminal_maps()
         self._load_wires(json["Wires"], wires_map)
         self._check_ports()
 
@@ -31,6 +32,17 @@ class System:
         assert (
             len(duplicate_processors) == 0
         ), f"Duplicate references to the same processor IDs found in system {self.name} (only load processors once in a system): {duplicate_processors}"
+
+    def _add_processor_port_terminal_maps(self):
+        self.processor_ports_map = {}
+        self.processor_terminals_map = {}
+        for processor in self.processors:
+            self.processor_ports_map[processor.id] = [
+                [] for _ in range(len(processor.ports))
+            ]
+            self.processor_terminals_map[processor.id] = [
+                [] for _ in range(len(processor.terminals))
+            ]
 
     def _load_wires(self, wires, wires_map):
         bad_wires = [wire for wire in wires if wire not in wires_map]
