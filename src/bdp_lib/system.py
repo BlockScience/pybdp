@@ -1,4 +1,5 @@
 from .convenience import find_duplicates
+from pprint import pprint
 
 
 class System:
@@ -107,9 +108,27 @@ class System:
         return out
 
     def make_processor_lazy(self):
-        open_ports = self.get_open_ports()
-        open_terminals = self.get_available_terminals(open_only=True)
-        print(open_ports, open_terminals)
+        # Get open ports and terminals
+        ports = self.get_open_ports()
+        terminals = self.get_available_terminals(open_only=True)
+
+        # Get spaces
+        domain = list(map(lambda x: x[2].id, ports))
+        codomain = list(map(lambda x: x[2].id, terminals))
+
+        block_scaffold = {
+            "ID": self.id + "-CP",
+            "Name": self.name + "-CP",
+            "Description": "A lazy loaded composite processor for {}".format(self.name),
+            "Domain": domain,
+            "Codomain": codomain,
+        }
+
+        print("-----Add the following to your JSON-----")
+        print()
+        print("Add to blocks:")
+        pprint(block_scaffold)
+        print()
 
 
 def load_system(json, processors_map, wires_map):
