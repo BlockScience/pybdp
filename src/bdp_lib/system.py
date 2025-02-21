@@ -175,6 +175,47 @@ class System:
         print("Add to processors:")
         pprint(processor_scaffold)
 
+    def create_mermaid_graphic(self):
+        out = ""
+
+        processor_map = {}
+        ports_map = {}
+        terminals_map = {}
+
+        for i, p in enumerate(self.processors):
+            out += "X{}[{}]\n".format(i, p.name)
+            processor_map[p.id] = "X{}".format(i)
+            ports_map[p.id] = {}
+            terminals_map[p.id] = {}
+            for i, port in enumerate(p.ports):
+                ports_map[p.id][i] = "X{}P{}[{}]".format(
+                    processor_map[p.id], i, port.name
+                )
+                out += "{}\n".format(ports_map[p.id][i])
+                out += "{} o--o {}\n".format(ports_map[p.id][i], processor_map[p.id])
+            for i, terminal in enumerate(p.terminals):
+                terminals_map[p.id][i] = "X{}T{}[{}]".format(
+                    processor_map[p.id], i, terminal.name
+                )
+                out += "{}\n".format(terminals_map[p.id][i])
+                out += "{} o--o {}\n".format(
+                    processor_map[p.id], terminals_map[p.id][i]
+                )
+
+        for wire in self.wires:
+            out += "{} ------> {}\n".format(
+                terminals_map[wire.source["Processor"].id][wire.source["Index"]],
+                ports_map[wire.target["Processor"].id][wire.target["Index"]],
+            )
+
+        out = """```mermaid
+        graph LR
+        {}
+        ```""".format(
+            out
+        )
+        return out
+
 
 def load_system(json, processors_map, wires_map):
     return System(json, processors_map, wires_map)
