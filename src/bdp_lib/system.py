@@ -183,17 +183,21 @@ class System:
         terminals_map = {}
 
         for i, p in enumerate(self.processors):
+            subgraph = "G{}".format(i)
             out += "subgraph G{}[{} - {} Block]\n".format(i, p.name, p.parent.name)
             out += "X{}[{}]\n".format(i, p.name)
             processor_map[p.id] = "X{}".format(i)
             ports_map[p.id] = {}
             terminals_map[p.id] = {}
+            out += "subgraph {}P[Ports]\n".format(subgraph)
             for i, port in enumerate(p.ports):
                 ports_map[p.id][i] = "X{}P{}[{}]".format(
                     processor_map[p.id], i, port.name
                 )
                 out += "{}\n".format(ports_map[p.id][i])
                 out += "{} o--o {}\n".format(ports_map[p.id][i], processor_map[p.id])
+            out += "end\n"
+            out += "subgraph {}T[Terminals]\n".format(subgraph)
             for i, terminal in enumerate(p.terminals):
                 terminals_map[p.id][i] = "X{}T{}[{}]".format(
                     processor_map[p.id], i, terminal.name
@@ -202,6 +206,7 @@ class System:
                 out += "{} o--o {}\n".format(
                     processor_map[p.id], terminals_map[p.id][i]
                 )
+            out += "end\n"
             out += "end\n"
 
         for wire in self.wires:
