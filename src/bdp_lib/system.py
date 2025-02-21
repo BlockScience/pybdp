@@ -222,7 +222,11 @@ class System:
             )
 
         out = """```mermaid
-graph TD
+---
+config:
+  layout: elk
+---
+graph LR
 {}```""".format(
             out
         )
