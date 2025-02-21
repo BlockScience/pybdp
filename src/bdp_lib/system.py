@@ -190,23 +190,27 @@ class System:
             ports_map[p.id] = {}
             terminals_map[p.id] = {}
             out += "subgraph {}P[Ports]\n".format(subgraph)
+            l = []
             for i, port in enumerate(p.ports):
                 ports_map[p.id][i] = "X{}P{}[{}]".format(
                     processor_map[p.id], i, port.name
                 )
                 out += "{}\n".format(ports_map[p.id][i])
-                out += "{} o--o {}\n".format(ports_map[p.id][i], processor_map[p.id])
+                l.append("{} o--o {}\n".format(ports_map[p.id][i], processor_map[p.id]))
             out += "end\n"
+            out += "".join(l)
+            l = []
             out += "subgraph {}T[Terminals]\n".format(subgraph)
             for i, terminal in enumerate(p.terminals):
                 terminals_map[p.id][i] = "X{}T{}[{}]".format(
                     processor_map[p.id], i, terminal.name
                 )
                 out += "{}\n".format(terminals_map[p.id][i])
-                out += "{} o--o {}\n".format(
-                    processor_map[p.id], terminals_map[p.id][i]
+                l.append(
+                    "{} o--o {}\n".format(processor_map[p.id], terminals_map[p.id][i])
                 )
             out += "end\n"
+            out += "".join(l)
             out += "end\n"
 
         for wire in self.wires:
