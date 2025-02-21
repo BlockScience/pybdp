@@ -183,6 +183,7 @@ class System:
         terminals_map = {}
 
         for i, p in enumerate(self.processors):
+            out += "subgraph G{}[{} - {} Block]\n".format(i, p.name, p.parent.name)
             out += "X{}[{}]\n".format(i, p.name)
             processor_map[p.id] = "X{}".format(i)
             ports_map[p.id] = {}
@@ -201,6 +202,7 @@ class System:
                 out += "{} o--o {}\n".format(
                     processor_map[p.id], terminals_map[p.id][i]
                 )
+            out += "end\n"
 
         for wire in self.wires:
             out += "{} ------> {}\n".format(
@@ -209,9 +211,8 @@ class System:
             )
 
         out = """```mermaid
-        graph LR
-        {}
-        ```""".format(
+graph LR
+{}```""".format(
             out
         )
         return out
