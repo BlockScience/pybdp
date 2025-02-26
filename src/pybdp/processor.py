@@ -13,6 +13,12 @@ class Processor:
         self._load_ports(json["Ports"], spaces_map)
         self._load_terminals(json["Terminals"], spaces_map)
 
+        if "Subsystem" in json:
+            self.subsystem = json["Subsystem"]
+            print("Implement subsystems")
+        else:
+            self.subsytem = None
+
     def _load_parent(self, parent, blocks_map):
         assert (
             parent in blocks_map
