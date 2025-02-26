@@ -129,25 +129,12 @@ class System:
             "Codomain": codomain,
         }
 
-        wires_scaffold = []
-        for i, d in enumerate(ports):
-            wires_scaffold.append(
-                {
-                    "ID": processor_id + "-P{}".format(i),
-                    "Parent": d[2].id,
-                    "Source": {"Processor": processor_id, "Index": i},
-                    "Target": {"Processor": d[0].id, "Index": d[1]},
-                }
-            )
-        for i, d in enumerate(terminals):
-            wires_scaffold.append(
-                {
-                    "ID": processor_id + "-T{}".format(i),
-                    "Parent": d[2].id,
-                    "Source": {"Processor": d[0].id, "Index": d[1]},
-                    "Target": {"Processor": processor_id, "Index": i},
-                }
-            )
+        port_mappings = []
+        for d in ports:
+            port_mappings.append({"Processor": d[0].id, "Index": d[1]})
+        terminal_mappings = []
+        for d in terminals:
+            terminal_mappings.append({"Processor": d[0].id, "Index": d[1]})
 
         processor_scaffold = {
             "ID": processor_id,
@@ -160,7 +147,8 @@ class System:
             "Terminals": codomain,
             "Subsystem": {
                 "System ID": self.id,
-                "Wires": [x["ID"] for x in wires_scaffold],
+                "Port Mappings": port_mappings,
+                "Terminal Mappings": terminal_mappings,
             },
         }
 
@@ -168,9 +156,6 @@ class System:
         print()
         print("Add to blocks:")
         pprint(block_scaffold)
-        print()
-        print("Add to wirings:")
-        pprint(wires_scaffold)
         print()
         print("Add to processors:")
         pprint(processor_scaffold)
