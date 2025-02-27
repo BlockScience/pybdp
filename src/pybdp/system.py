@@ -178,10 +178,7 @@ class System:
             )
 
         for wire in self.wires:
-            out += "{} ---> {}\n".format(
-                terminals_map[wire.source["Processor"].id][wire.source["Index"]],
-                ports_map[wire.target["Processor"].id][wire.target["Index"]],
-            )
+            out = wire.create_mermaid_graphic(out, terminals_map, ports_map)
 
         out = """```mermaid
 ---
