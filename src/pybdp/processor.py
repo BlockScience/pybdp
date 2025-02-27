@@ -229,6 +229,9 @@ graph LR
         processor_i += 1
         return out, processor_i
 
+    def is_primitive(self):
+        return self.subsystem is None
+
 
 def load_processor(json, blocks_map, spaces_map):
     return Processor(json, blocks_map, spaces_map)
