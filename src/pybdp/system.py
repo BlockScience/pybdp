@@ -129,25 +129,12 @@ class System:
             "Codomain": codomain,
         }
 
-        wires_scaffold = []
-        for i, d in enumerate(ports):
-            wires_scaffold.append(
-                {
-                    "ID": processor_id + "-P{}".format(i),
-                    "Parent": d[2].id,
-                    "Source": {"Processor": processor_id, "Index": i},
-                    "Target": {"Processor": d[0].id, "Index": d[1]},
-                }
-            )
-        for i, d in enumerate(terminals):
-            wires_scaffold.append(
-                {
-                    "ID": processor_id + "-T{}".format(i),
-                    "Parent": d[2].id,
-                    "Source": {"Processor": d[0].id, "Index": d[1]},
-                    "Target": {"Processor": processor_id, "Index": i},
-                }
-            )
+        port_mappings = []
+        for d in ports:
+            port_mappings.append({"Processor": d[0].id, "Index": d[1]})
+        terminal_mappings = []
+        for d in terminals:
+            terminal_mappings.append({"Processor": d[0].id, "Index": d[1]})
 
         processor_scaffold = {
             "ID": processor_id,
@@ -160,7 +147,8 @@ class System:
             "Terminals": codomain,
             "Subsystem": {
                 "System ID": self.id,
-                "Wires": [x["ID"] for x in wires_scaffold],
+                "Port Mappings": port_mappings,
+                "Terminal Mappings": terminal_mappings,
             },
         }
 
@@ -169,68 +157,48 @@ class System:
         print("Add to blocks:")
         pprint(block_scaffold)
         print()
-        print("Add to wirings:")
-        pprint(wires_scaffold)
-        print()
         print("Add to processors:")
         pprint(processor_scaffold)
 
-    def create_mermaid_graphic(self):
-        out = ""
+    def create_mermaid_graphic(
+        self,
+        out="",
+        system_i=0,
+        top_level=True,
+        processor_map={},
+        ports_map={},
+        terminals_map={},
+        processor_i=0,
+    ):
 
-        processor_map = {}
-        ports_map = {}
-        terminals_map = {}
+        out += "subgraph GS{}[{}]\n".format(system_i, self.name)
 
-        for i, p in enumerate(self.processors):
-            subgraph = "G{}".format(i)
-            out += "subgraph G{}[{} - {} Block]\ndirection LR\n".format(
-                i, p.name, p.parent.name
+        for p in self.processors:
+            out, processor_i = p.create_mermaid_graphic(
+                out=out,
+                processor_i=processor_i,
+                processor_map=processor_map,
+                ports_map=ports_map,
+                terminals_map=terminals_map,
             )
-            out += "X{}[{}]\n".format(i, p.name)
-            processor_map[p.id] = "X{}".format(i)
-            ports_map[p.id] = {}
-            terminals_map[p.id] = {}
-            out += "subgraph {}P[Ports]\ndirection TB\n".format(subgraph)
-            l = []
-            for i, port in enumerate(p.ports):
-                ports_map[p.id][i] = "X{}P{}[{}]".format(
-                    processor_map[p.id], i, port.name
-                )
-                out += "{}\n".format(ports_map[p.id][i])
-                l.append("{} o--o {}\n".format(ports_map[p.id][i], processor_map[p.id]))
-            out += "end\n"
-            out += "".join(l)
-            l = []
-            out += "subgraph {}T[Terminals]\ndirection TB\n".format(subgraph)
-            for i, terminal in enumerate(p.terminals):
-                terminals_map[p.id][i] = "X{}T{}[{}]".format(
-                    processor_map[p.id], i, terminal.name
-                )
-                out += "{}\n".format(terminals_map[p.id][i])
-                l.append(
-                    "{} o--o {}\n".format(processor_map[p.id], terminals_map[p.id][i])
-                )
-            out += "end\n"
-            out += "".join(l)
-            out += "end\n"
 
         for wire in self.wires:
-            out += "{} ---> {}\n".format(
-                terminals_map[wire.source["Processor"].id][wire.source["Index"]],
-                ports_map[wire.target["Processor"].id][wire.target["Index"]],
-            )
+            out = wire.create_mermaid_graphic(out, terminals_map, ports_map)
 
-        out = """```mermaid
+        out += "end\n"
+        if top_level:
+            out = """```mermaid
 ---
 config:
-  layout: elk
+    layout: elk
 ---
 graph LR
-{}```""".format(
-            out
-        )
-        return out
+{}
+```""".format(
+                out
+            )
+        system_i += 1
+        return out, system_i
 
 
 def load_system(json, processors_map, wires_map):

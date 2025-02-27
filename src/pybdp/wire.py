@@ -68,6 +68,13 @@ class Wire:
             self.target["Index"],
         )
 
+    def create_mermaid_graphic(self, out, terminals_map, ports_map):
+        out += "{} ---> {}\n".format(
+            terminals_map[self.source["Processor"].id][self.source["Index"]],
+            ports_map[self.target["Processor"].id][self.target["Index"]],
+        )
+        return out
+
 
 def load_wire(json, blocks_map, spaces_map):
     return Wire(json, blocks_map, spaces_map)
