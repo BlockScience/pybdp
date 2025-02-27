@@ -100,7 +100,7 @@ class Processor:
             ), "Error in loading subsystem for composite processor {} - {} is not a valid terminal".format(
                 self.id, key
             )
-            self.subsytem_port_mappings.append(
+            self.subsytem_terminal_mappings.append(
                 {"Processor": processor_map[x["Processor"]], "Index": x["Index"]}
             )
 
@@ -198,6 +198,19 @@ class Processor:
             interior = ports_map[interior["Processor"].id][interior["Index"]]
 
             l.append("{} o--o {}\n".format(ports_map[self.id][i], interior))
+        out += "end\n"
+        out += "".join(l)
+
+        l = []
+        out += "subgraph {}T[Terminals]\ndirection TB\n".format(subgraph)
+        for i, terminal in enumerate(self.terminals):
+            terminals_map[self.id][i] = "X{}T{}[{}]".format(system_i, i, terminal.name)
+            out += "{}\n".format(terminals_map[self.id][i])
+
+            interior = self.subsytem_terminal_mappings[i]
+            interior = terminals_map[interior["Processor"].id][interior["Index"]]
+
+            l.append("{} o--o {}\n".format(interior, terminals_map[self.id][i]))
         out += "end\n"
         out += "".join(l)
 
