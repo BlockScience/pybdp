@@ -123,6 +123,7 @@ class Processor:
         ports_map={},
         terminals_map={},
         top_level=True,
+        system_i=0,
     ):
         subgraph = "G{}".format(processor_i)
         out += "subgraph G{}[{} - {} Block]\ndirection LR\n".format(
@@ -173,7 +174,7 @@ graph LR
                 out
             )
 
-        return out, processor_i
+        return out, processor_i, system_i
 
     def create_mermaid_graphic_composite(
         self,
@@ -185,6 +186,16 @@ graph LR
         ports_map={},
         terminals_map={},
     ):
+        if self.is_primitive():
+            return self.create_mermaid_graphic(
+                out=out,
+                processor_i=processor_i,
+                processor_map=processor_map,
+                ports_map=ports_map,
+                terminals_map=terminals_map,
+                top_level=top_level,
+                system_i=system_i,
+            )
         subgraph = "GC{}".format(processor_i)
         out += "subgraph GC{}[{} - {} Block]\ndirection LR\n".format(
             processor_i, self.name, self.parent.name
@@ -239,7 +250,7 @@ graph LR
                 out
             )
         processor_i += 1
-        return out, processor_i
+        return out, processor_i, system_i
 
     def is_primitive(self):
         return self.subsystem is None
