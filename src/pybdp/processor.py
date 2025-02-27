@@ -232,6 +232,12 @@ graph LR
     def is_primitive(self):
         return self.subsystem is None
 
+    def get_system(self):
+        if self.is_primitive():
+            return None
+        else:
+            return self.subsystem
+
 
 def load_processor(json, blocks_map, spaces_map):
     return Processor(json, blocks_map, spaces_map)
