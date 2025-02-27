@@ -70,6 +70,29 @@ class Processor:
         tm = self.subsystem["Terminal Mappings"]
         self.subsystem = systems_map[self.subsystem["System ID"]]
 
+        open_ports = self.subsystem.get_open_ports()
+        open_ports = {(x[0].id, x[1]): False for x in open_ports}
+        terminals = self.subsystem.get_available_terminals(open_only=False)
+        terminals = set([(x[0].id, x[1]) for x in terminals])
+
+        self.subsytem_port_mappings = []
+        for x in pm:
+            key = (x["Processor"], x["Index"])
+            assert (
+                key in open_ports
+            ), "Error in loading subsystem for composite processor {} - {} is not an open port".format(
+                self.id, key
+            )
+
+        self.subsytem_terminal_mappings = []
+        for x in tm:
+            key = (x["Processor"], x["Index"])
+            assert (
+                key in terminals
+            ), "Error in loading subsystem for composite processor {} - {} is not a valid terminal".format(
+                self.id, key
+            )
+
     def __repr__(self):
         return "< Processor ID: {} Name: {} {}->{}>".format(
             self.id,
