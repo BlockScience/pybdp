@@ -57,7 +57,7 @@ class Processor:
             self.terminals, self.name, self.parent.codomain, self.parent.name
         )
 
-    def _load_subsytem(self, systems_map):
+    def _load_subsytem(self, systems_map, processor_map):
         if not self.subsystem:
             return
         assert (
@@ -83,6 +83,14 @@ class Processor:
             ), "Error in loading subsystem for composite processor {} - {} is not an open port".format(
                 self.id, key
             )
+            assert not open_ports[
+                key
+            ], "Error in loading subsystem for composite processor {} - {} is already used as a port".format(
+                self.id, key
+            )
+            self.subsytem_port_mappings.append(
+                {"Processor": processor_map[x["Processor"]], "Index": x["Index"]}
+            )
 
         self.subsytem_terminal_mappings = []
         for x in tm:
@@ -91,6 +99,9 @@ class Processor:
                 key in terminals
             ), "Error in loading subsystem for composite processor {} - {} is not a valid terminal".format(
                 self.id, key
+            )
+            self.subsytem_port_mappings.append(
+                {"Processor": processor_map[x["Processor"]], "Index": x["Index"]}
             )
 
     def __repr__(self):
