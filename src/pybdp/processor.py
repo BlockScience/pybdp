@@ -187,6 +187,19 @@ class Processor:
             terminals_map=terminals_map,
             processor_i=processor_i,
         )
+        ports_map[self.id] = {}
+        terminals_map[self.id] = {}
+        out += "subgraph {}P[Ports]\ndirection TB\n".format(subgraph)
+        l = []
+        for i, port in enumerate(self.ports):
+            ports_map[self.id][i] = "X{}P{}[{}]".format(system_i, i, port.name)
+            out += "{}\n".format(ports_map[self.id][i])
+            interior = self.subsytem_port_mappings[i]
+            interior = ports_map[interior["Processor"].id][interior["Index"]]
+
+            l.append("{} o--o {}\n".format(ports_map[self.id][i], interior))
+        out += "end\n"
+        out += "".join(l)
 
         out += "end\n"
         if top_level:

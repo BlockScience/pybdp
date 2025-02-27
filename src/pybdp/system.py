@@ -173,11 +173,6 @@ class System:
 
         out += "subgraph GS{}[{}]\n".format(system_i, self.name)
 
-        processor_map = {}
-        ports_map = {}
-        terminals_map = {}
-        processor_i = 0
-
         for p in self.processors:
             out, processor_i = p.create_mermaid_graphic(
                 out=out,
