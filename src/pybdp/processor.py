@@ -122,6 +122,7 @@ class Processor:
         processor_map={},
         ports_map={},
         terminals_map={},
+        top_level=True,
     ):
         subgraph = "G{}".format(processor_i)
         out += "subgraph G{}[{} - {} Block]\ndirection LR\n".format(
@@ -160,6 +161,17 @@ class Processor:
         out += "end\n"
 
         processor_i += 1
+        if top_level:
+            out = """```mermaid
+---
+config:
+    layout: elk
+---
+graph LR
+{}
+```""".format(
+                out
+            )
 
         return out, processor_i
 

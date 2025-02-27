@@ -180,6 +180,7 @@ class System:
                 processor_map=processor_map,
                 ports_map=ports_map,
                 terminals_map=terminals_map,
+                top_level=False,
             )
 
         for wire in self.wires:
