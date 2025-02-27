@@ -115,6 +115,54 @@ class Processor:
     def get_shape(self):
         return self.parent
 
+    def create_mermaid_graphic(
+        self,
+        out="",
+        processor_i=0,
+        processor_map={},
+        ports_map={},
+        terminals_map={},
+    ):
+        subgraph = "G{}".format(processor_i)
+        out += "subgraph G{}[{} - {} Block]\ndirection LR\n".format(
+            processor_i, self.name, self.parent.name
+        )
+        out += "X{}[{}]\n".format(processor_i, self.name)
+        processor_map[self.id] = "X{}".format(processor_i)
+        ports_map[self.id] = {}
+        terminals_map[self.id] = {}
+        out += "subgraph {}P[Ports]\ndirection TB\n".format(subgraph)
+
+        l = []
+        for i, port in enumerate(self.ports):
+            ports_map[self.id][i] = "X{}P{}[{}]".format(
+                processor_map[self.id], i, port.name
+            )
+            out += "{}\n".format(ports_map[self.id][i])
+            l.append(
+                "{} o--o {}\n".format(ports_map[self.id][i], processor_map[self.id])
+            )
+        out += "end\n"
+        out += "".join(l)
+
+        l = []
+        out += "subgraph {}T[Terminals]\ndirection TB\n".format(subgraph)
+        for i, terminal in enumerate(self.terminals):
+            terminals_map[self.id][i] = "X{}T{}[{}]".format(
+                processor_map[self.id], i, terminal.name
+            )
+            out += "{}\n".format(terminals_map[self.id][i])
+            l.append(
+                "{} o--o {}\n".format(processor_map[self.id], terminals_map[self.id][i])
+            )
+        out += "end\n"
+        out += "".join(l)
+        out += "end\n"
+
+        processor_i += 1
+
+        return out, processor_i
+
 
 def load_processor(json, blocks_map, spaces_map):
     return Processor(json, blocks_map, spaces_map)
