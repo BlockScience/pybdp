@@ -14,10 +14,10 @@ class Processor:
         self._load_terminals(json["Terminals"], spaces_map)
 
         if "Subsystem" in json:
+            # This will be processed in after the project is loaded
             self.subsystem = json["Subsystem"]
-            print("Implement subsystems")
         else:
-            self.subsytem = None
+            self.subsystem = None
 
     def _load_parent(self, parent, blocks_map):
         assert (
@@ -56,6 +56,19 @@ class Processor:
         ), "The terminals of {} for the processor {} do not match the codomain of {} that its parent block {} has".format(
             self.terminals, self.name, self.parent.codomain, self.parent.name
         )
+
+    def _load_subsytem(self, systems_map):
+        if not self.subsystem:
+            return
+        assert (
+            self.subsystem["System ID"] in systems_map
+        ), "Subsystem ID of {} used by the composite processor {} is not in the project".format(
+            self.subsystem["System ID"], self.id
+        )
+
+        pm = self.subsystem["Port Mappings"]
+        tm = self.subsystem["Terminal Mappings"]
+        self.subsystem = systems_map[self.subsystem["System ID"]]
 
     def __repr__(self):
         return "< Processor ID: {} Name: {} {}->{}>".format(

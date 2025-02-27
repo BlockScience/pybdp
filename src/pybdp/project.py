@@ -34,6 +34,10 @@ class Project:
 
         self._validate_unique_ids()
 
+        # Build out composite processors
+        for processor in self.processors:
+            processor._load_subsytem(self.systems_map)
+
     def _validate_unique_ids(self):
         duplicates = find_duplicates(
             self.blocks + self.spaces + self.processors + self.wires + self.systems
