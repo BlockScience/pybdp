@@ -160,8 +160,16 @@ class System:
         print("Add to processors:")
         pprint(processor_scaffold)
 
-    def create_mermaid_graphic(self, out="", system_i=0, top_level=True):
-        out = ""
+    def create_mermaid_graphic(
+        self,
+        out="",
+        system_i=0,
+        top_level=True,
+        processor_map={},
+        ports_map={},
+        terminals_map={},
+        processor_i=0,
+    ):
 
         out += "subgraph GS{}[{}]\n".format(system_i, self.name)
 
@@ -182,7 +190,7 @@ class System:
         for wire in self.wires:
             out = wire.create_mermaid_graphic(out, terminals_map, ports_map)
 
-        out += "end"
+        out += "end\n"
         if top_level:
             out = """```mermaid
 ---
@@ -194,7 +202,8 @@ graph LR
 ```""".format(
                 out
             )
-        return out
+        system_i += 1
+        return out, system_i
 
 
 def load_system(json, processors_map, wires_map):

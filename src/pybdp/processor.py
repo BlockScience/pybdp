@@ -163,6 +163,46 @@ class Processor:
 
         return out, processor_i
 
+    def create_mermaid_graphic_composite(
+        self,
+        out="",
+        processor_i=0,
+        system_i=0,
+        top_level=True,
+        processor_map={},
+        ports_map={},
+        terminals_map={},
+    ):
+        subgraph = "GC{}".format(processor_i)
+        out += "subgraph GC{}[{} - {} Block]\ndirection LR\n".format(
+            processor_i, self.name, self.parent.name
+        )
+
+        out, system_i = self.subsystem.create_mermaid_graphic(
+            out=out,
+            system_i=system_i,
+            top_level=False,
+            processor_map=processor_map,
+            ports_map=ports_map,
+            terminals_map=terminals_map,
+            processor_i=processor_i,
+        )
+
+        out += "end\n"
+        if top_level:
+            out = """```mermaid
+---
+config:
+    layout: elk
+---
+graph LR
+{}
+```""".format(
+                out
+            )
+        processor_i += 1
+        return out, processor_i
+
 
 def load_processor(json, blocks_map, spaces_map):
     return Processor(json, blocks_map, spaces_map)
