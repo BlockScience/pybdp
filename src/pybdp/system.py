@@ -213,7 +213,7 @@ graph LR
                 out
             )
 
-        return out, system_i
+        return out, processor_i, system_i
 
 
 def load_system(json, processors_map, wires_map):

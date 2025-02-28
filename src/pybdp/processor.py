@@ -200,8 +200,9 @@ graph LR
         out += "subgraph GC{}[{} - {} Block]\ndirection LR\n".format(
             processor_i, self.name, self.parent.name
         )
+        processor_i += 1
 
-        out, system_i = self.subsystem.create_mermaid_graphic(
+        out, processor_i, system_i = self.subsystem.create_mermaid_graphic(
             out=out,
             system_i=system_i,
             top_level=False,
