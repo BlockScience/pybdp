@@ -122,6 +122,8 @@ class Processor:
         processor_map={},
         ports_map={},
         terminals_map={},
+        top_level=True,
+        system_i=0,
     ):
         subgraph = "G{}".format(processor_i)
         out += "subgraph G{}[{} - {} Block]\ndirection LR\n".format(
@@ -160,8 +162,19 @@ class Processor:
         out += "end\n"
 
         processor_i += 1
+        if top_level:
+            out = """```mermaid
+---
+config:
+    layout: elk
+---
+graph LR
+{}
+```""".format(
+                out
+            )
 
-        return out, processor_i
+        return out, processor_i, system_i
 
     def create_mermaid_graphic_composite(
         self,
@@ -173,12 +186,23 @@ class Processor:
         ports_map={},
         terminals_map={},
     ):
+        if self.is_primitive():
+            return self.create_mermaid_graphic(
+                out=out,
+                processor_i=processor_i,
+                processor_map=processor_map,
+                ports_map=ports_map,
+                terminals_map=terminals_map,
+                top_level=top_level,
+                system_i=system_i,
+            )
         subgraph = "GC{}".format(processor_i)
         out += "subgraph GC{}[{} - {} Block]\ndirection LR\n".format(
             processor_i, self.name, self.parent.name
         )
+        processor_i += 1
 
-        out, system_i = self.subsystem.create_mermaid_graphic(
+        out, processor_i, system_i = self.subsystem.create_mermaid_graphic(
             out=out,
             system_i=system_i,
             top_level=False,
@@ -227,7 +251,16 @@ graph LR
                 out
             )
         processor_i += 1
-        return out, processor_i
+        return out, processor_i, system_i
+
+    def is_primitive(self):
+        return self.subsystem is None
+
+    def get_system(self):
+        if self.is_primitive():
+            return None
+        else:
+            return self.subsystem
 
 
 def load_processor(json, blocks_map, spaces_map):

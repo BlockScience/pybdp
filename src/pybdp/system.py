@@ -169,18 +169,33 @@ class System:
         ports_map={},
         terminals_map={},
         processor_i=0,
+        recursive=False,
     ):
 
         out += "subgraph GS{}[{}]\n".format(system_i, self.name)
+        system_i += 1
 
         for p in self.processors:
-            out, processor_i = p.create_mermaid_graphic(
-                out=out,
-                processor_i=processor_i,
-                processor_map=processor_map,
-                ports_map=ports_map,
-                terminals_map=terminals_map,
-            )
+            if recursive:
+                out, processor_i, system_i = p.create_mermaid_graphic_composite(
+                    out=out,
+                    processor_i=processor_i,
+                    processor_map=processor_map,
+                    ports_map=ports_map,
+                    terminals_map=terminals_map,
+                    top_level=False,
+                    system_i=system_i,
+                )
+            else:
+                out, processor_i, system_i = p.create_mermaid_graphic(
+                    out=out,
+                    processor_i=processor_i,
+                    processor_map=processor_map,
+                    ports_map=ports_map,
+                    terminals_map=terminals_map,
+                    top_level=False,
+                    system_i=system_i,
+                )
 
         for wire in self.wires:
             out = wire.create_mermaid_graphic(out, terminals_map, ports_map)
@@ -197,8 +212,8 @@ graph LR
 ```""".format(
                 out
             )
-        system_i += 1
-        return out, system_i
+
+        return out, processor_i, system_i
 
 
 def load_system(json, processors_map, wires_map):
