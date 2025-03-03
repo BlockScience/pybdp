@@ -142,6 +142,11 @@ class System:
                         return False
         return True
 
+    def is_valid(self):
+        condition1 = len(self.get_open_ports()) == 0
+        condition2 = self.is_connected()
+        return condition1 and condition2
+
     def get_spaces(self):
         spaces = set().union(
             *(
