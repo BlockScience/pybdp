@@ -16,6 +16,7 @@ class System:
         self._load_wires(json["Wires"], wires_map)
         self._add_processor_port_terminal_maps()
         self._check_ports()
+        self.processors_map = processors_map
 
     def _load_processors(self, processors, processors_map):
         bad_processors = [
@@ -106,6 +107,58 @@ class System:
                 else:
                     out.append([processor, i, processor.terminals[i]])
         return out
+
+    def is_connected(self):
+        processors = set([x.id for x in self.processors])
+
+        q = [processors.pop()]
+        while len(q) > 0:
+            cur = q.pop()
+            cur = self.processors_map[cur]
+            wires = [x for x in self.wires if x.source["Processor"].id == cur.id]
+            for x in wires:
+                x = x.target["Processor"].id
+                if x in processors:
+                    q.append(x)
+                    processors.remove(x)
+        return len(processors) == 0
+
+    def is_directed(self):
+        processors = set([x.id for x in self.processors])
+        while len(processors) > 0:
+            q = [processors.pop()]
+            visited = []
+            while len(q) > 0:
+                cur = q.pop()
+                visited.append(cur)
+                cur = self.processors_map[cur]
+                wires = [x for x in self.wires if x.source["Processor"].id == cur.id]
+                for x in wires:
+                    x = x.target["Processor"].id
+                    if x in processors:
+                        q.append(x)
+                        processors.remove(x)
+                    if x in visited:
+                        return False
+        return True
+
+    def is_valid(self):
+        condition1 = len(self.get_open_ports()) == 0
+        condition2 = self.is_connected()
+        return condition1 and condition2
+
+    def get_spaces(self):
+        spaces = set().union(
+            *(
+                [x.ports for x in self.processors]
+                + [x.terminals for x in self.processors]
+            )
+        )
+        spaces = list(spaces)
+        return spaces
+
+    def get_subsystems(self):
+        return [x.subsystem for x in self.processors if not x.is_primitive()]
 
     def make_processor_lazy(self):
         # Get open ports and terminals
