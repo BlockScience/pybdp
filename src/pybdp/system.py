@@ -115,9 +115,18 @@ class System:
         while len(q) > 0:
             cur = q.pop()
             cur = self.processors_map[cur]
-            wires = [x for x in self.wires if x.source["Processor"].id == cur.id]
-            for x in wires:
-                x = x.target["Processor"].id
+            wires = [
+                x
+                for x in self.wires
+                if x.source["Processor"].id == cur.id
+                or x.target["Processor"].id == cur.id
+            ]
+            for y in wires:
+                x = y.target["Processor"].id
+                if x in processors:
+                    q.append(x)
+                    processors.remove(x)
+                x = y.source["Processor"].id
                 if x in processors:
                     q.append(x)
                     processors.remove(x)
@@ -146,6 +155,46 @@ class System:
         condition1 = len(self.get_open_ports()) == 0
         condition2 = self.is_connected()
         return condition1 and condition2
+
+    def is_dynamical(self):
+        return not self.is_directed()
+
+    def get_connected_components(self):
+        processors = set([x.id for x in self.processors])
+        clusters = []
+        while len(processors) > 0:
+            cluster = []
+            q = [processors.pop()]
+            while len(q) > 0:
+                cur = q.pop()
+                cur = self.processors_map[cur]
+                cluster.append(cur)
+                wires = [
+                    x
+                    for x in self.wires
+                    if x.source["Processor"].id == cur.id
+                    or x.target["Processor"].id == cur.id
+                ]
+                for y in wires:
+                    x = y.target["Processor"].id
+                    if x in processors:
+                        q.append(x)
+                        processors.remove(x)
+                    x = y.source["Processor"].id
+                    if x in processors:
+                        q.append(x)
+                        processors.remove(x)
+            clusters.append(cluster)
+        return clusters
+
+    def get_hierachy(self):
+        out = {}
+        for processor in self.processors:
+            if processor.is_primitive():
+                out[processor.id] = processor
+            else:
+                out[processor.id] = processor.subsystem.get_hierachy()
+        return out
 
     def get_spaces(self):
         spaces = set().union(
