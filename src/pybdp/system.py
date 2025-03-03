@@ -147,6 +147,9 @@ class System:
         condition2 = self.is_connected()
         return condition1 and condition2
 
+    def is_dynamical(self):
+        return not self.is_directed()
+
     def get_spaces(self):
         spaces = set().union(
             *(
