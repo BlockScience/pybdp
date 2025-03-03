@@ -115,9 +115,18 @@ class System:
         while len(q) > 0:
             cur = q.pop()
             cur = self.processors_map[cur]
-            wires = [x for x in self.wires if x.source["Processor"].id == cur.id]
-            for x in wires:
-                x = x.target["Processor"].id
+            wires = [
+                x
+                for x in self.wires
+                if x.source["Processor"].id == cur.id
+                or x.target["Processor"].id == cur.id
+            ]
+            for y in wires:
+                x = y.target["Processor"].id
+                if x in processors:
+                    q.append(x)
+                    processors.remove(x)
+                x = y.source["Processor"].id
                 if x in processors:
                     q.append(x)
                     processors.remove(x)
@@ -149,6 +158,9 @@ class System:
 
     def is_dynamical(self):
         return not self.is_directed()
+
+    def get_connected_components(self):
+        pass
 
     def get_spaces(self):
         spaces = set().union(
