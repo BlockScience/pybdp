@@ -16,6 +16,7 @@ class System:
         self._load_wires(json["Wires"], wires_map)
         self._add_processor_port_terminal_maps()
         self._check_ports()
+        self.processors_map = processors_map
 
     def _load_processors(self, processors, processors_map):
         bad_processors = [
@@ -106,6 +107,21 @@ class System:
                 else:
                     out.append([processor, i, processor.terminals[i]])
         return out
+
+    def is_connected(self):
+        processors = set([x.id for x in self.processors])
+
+        q = [processors.pop()]
+        while len(q) > 0:
+            cur = q.pop()
+            cur = self.processors_map[cur]
+            wires = [x for x in self.wires if x.source["Processor"] == cur.id]
+            for x in wires:
+                x = x.target.processor
+                if x in processors:
+                    q.append(x)
+                    processors.remove(x)
+        return len(q) == 0
 
     def make_processor_lazy(self):
         # Get open ports and terminals
