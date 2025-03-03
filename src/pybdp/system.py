@@ -115,13 +115,32 @@ class System:
         while len(q) > 0:
             cur = q.pop()
             cur = self.processors_map[cur]
-            wires = [x for x in self.wires if x.source["Processor"] == cur.id]
+            wires = [x for x in self.wires if x.source["Processor"].id == cur.id]
             for x in wires:
-                x = x.target.processor
+                x = x.target["Processor"].id
                 if x in processors:
                     q.append(x)
                     processors.remove(x)
-        return len(q) == 0
+        return len(processors) == 0
+
+    def is_directed(self):
+        processors = set([x.id for x in self.processors])
+        while len(processors) > 0:
+            q = [processors.pop()]
+            visited = []
+            while len(q) > 0:
+                cur = q.pop()
+                visited.append(cur)
+                cur = self.processors_map[cur]
+                wires = [x for x in self.wires if x.source["Processor"].id == cur.id]
+                for x in wires:
+                    x = x.target["Processor"].id
+                    if x in processors:
+                        q.append(x)
+                        processors.remove(x)
+                    if x in visited:
+                        return False
+        return True
 
     def get_spaces(self):
         spaces = set().union(
