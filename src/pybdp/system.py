@@ -123,6 +123,16 @@ class System:
                     processors.remove(x)
         return len(q) == 0
 
+    def get_spaces(self):
+        spaces = set().union(
+            *(
+                [x.ports for x in self.processors]
+                + [x.terminals for x in self.processors]
+            )
+        )
+        spaces = list(spaces)
+        return spaces
+
     def make_processor_lazy(self):
         # Get open ports and terminals
         ports = self.get_open_ports()
