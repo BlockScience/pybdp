@@ -157,6 +157,9 @@ class System:
         spaces = list(spaces)
         return spaces
 
+    def get_subsystems(self):
+        return [x.subsystem for x in self.processors if not x.is_primitive()]
+
     def make_processor_lazy(self):
         # Get open ports and terminals
         ports = self.get_open_ports()
