@@ -160,7 +160,32 @@ class System:
         return not self.is_directed()
 
     def get_connected_components(self):
-        pass
+        processors = set([x.id for x in self.processors])
+        clusters = []
+        while len(processors) > 0:
+            cluster = []
+            q = [processors.pop()]
+            while len(q) > 0:
+                cur = q.pop()
+                cur = self.processors_map[cur]
+                cluster.append(cur)
+                wires = [
+                    x
+                    for x in self.wires
+                    if x.source["Processor"].id == cur.id
+                    or x.target["Processor"].id == cur.id
+                ]
+                for y in wires:
+                    x = y.target["Processor"].id
+                    if x in processors:
+                        q.append(x)
+                        processors.remove(x)
+                    x = y.source["Processor"].id
+                    if x in processors:
+                        q.append(x)
+                        processors.remove(x)
+            clusters.append(cluster)
+        return clusters
 
     def get_spaces(self):
         spaces = set().union(
