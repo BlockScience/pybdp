@@ -187,13 +187,13 @@ class System:
             clusters.append(cluster)
         return clusters
 
-    def get_hierachy(self):
+    def get_hierarchy(self):
         out = {}
         for processor in self.processors:
             if processor.is_primitive():
                 out[processor.id] = processor
             else:
-                out[processor.id] = processor.subsystem.get_hierachy()
+                out[processor.id] = processor.subsystem.get_hierarchy()
         return out
 
     def get_spaces(self):
