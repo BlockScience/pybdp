@@ -196,14 +196,24 @@ class System:
                 out[processor.id] = processor.subsystem.get_hierarchy()
         return out
 
-    def get_spaces(self):
-        spaces = set().union(
-            *(
-                [x.ports for x in self.processors]
-                + [x.terminals for x in self.processors]
+    def get_spaces(self, nested=False):
+        if not nested:
+            spaces = set().union(
+                *(
+                    [x.ports for x in self.processors]
+                    + [x.terminals for x in self.processors]
+                )
             )
-        )
-        spaces = list(spaces)
+            spaces = list(spaces)
+        else:
+            spaces = set()
+            for processor in self.processors:
+                if processor.is_primitive():
+                    spaces.update(processor.ports)
+                    spaces.update(processor.terminals)
+                else:
+                    spaces.update(processor.subsystem.get_spaces(nested=True))
+            spaces = list(spaces)
         return spaces
 
     def get_subsystems(self):
