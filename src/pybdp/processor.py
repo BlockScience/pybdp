@@ -221,7 +221,7 @@ graph LR
             interior = self.subsytem_port_mappings[i]
             interior = ports_map[interior["Processor"].id][interior["Index"]]
 
-            l.append("{} o--o {}\n".format(ports_map[self.id][i], interior))
+            l.append("{} --> {}\n".format(ports_map[self.id][i], interior))
         out += "end\n"
         out += "".join(l)
 
@@ -234,7 +234,7 @@ graph LR
             interior = self.subsytem_terminal_mappings[i]
             interior = terminals_map[interior["Processor"].id][interior["Index"]]
 
-            l.append("{} o--o {}\n".format(interior, terminals_map[self.id][i]))
+            l.append("{} --> {}\n".format(interior, terminals_map[self.id][i]))
         out += "end\n"
         out += "".join(l)
 
