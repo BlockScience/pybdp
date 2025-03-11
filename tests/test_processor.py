@@ -44,3 +44,36 @@ def test_load_processor(blocks_map, spaces_map):
     assert [terminal.id for terminal in processor.terminals] == ["S4"]
     assert processor.raw_data == processors[2]
     assert str(processor) == "< Processor ID: P3 Name: Processor 3 ['E', 'B']->['D']>"
+
+
+def test_is_primitive(blocks_map, spaces_map):
+    processor = load_processor(processors[0], blocks_map, spaces_map)
+    assert processor.is_primitive() == True
+
+    processor = load_processor(processors[1], blocks_map, spaces_map)
+    assert processor.is_primitive() == True
+
+    processor = load_processor(processors[2], blocks_map, spaces_map)
+    assert processor.is_primitive() == True
+
+
+def test_get_system(blocks_map, spaces_map):
+    processor = load_processor(processors[0], blocks_map, spaces_map)
+    assert processor.get_system() == None
+
+    processor = load_processor(processors[1], blocks_map, spaces_map)
+    assert processor.get_system() == None
+
+    processor = load_processor(processors[2], blocks_map, spaces_map)
+    assert processor.get_system() == None
+
+
+def test_get_shape(blocks_map, spaces_map):
+    processor = load_processor(processors[0], blocks_map, spaces_map)
+    assert processor.get_shape().id == "B1"
+
+    processor = load_processor(processors[1], blocks_map, spaces_map)
+    assert processor.get_shape().id == "B2"
+
+    processor = load_processor(processors[2], blocks_map, spaces_map)
+    assert processor.get_shape().id == "B3"
