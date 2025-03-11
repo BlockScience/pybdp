@@ -101,3 +101,19 @@ def test_get_open_ports(system):
             "< Space ID: S2 Name: B >",
         ],
     ]
+
+
+def test_is_connected(system):
+    assert system.is_connected() == True
+
+
+def test_is_directed(system):
+    assert system.is_directed() == False
+
+
+def test_is_valid(system):
+    assert system.is_valid() == False
+
+
+def test_is_dynamical(system):
+    assert system.is_dynamical() == True
