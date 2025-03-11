@@ -117,3 +117,34 @@ def test_is_valid(system):
 
 def test_is_dynamical(system):
     assert system.is_dynamical() == True
+
+
+def test_connected_components(system):
+    components = system.get_connected_components()
+    assert len(components) == 1, "There should be 1 cluster of connected component"
+    assert sorted([processor.id for processor in components[0]]) == ["P1", "P2", "P3"]
+
+
+def test_get_hierarchy(system):
+    hierarchy = system.get_hierarchy()
+    assert len(hierarchy) == 3, "There should be 3 entries in the hierarchy"
+    assert (
+        str(hierarchy["P1"])
+        == "< Processor ID: P1 Name: Processor 1 ['A', 'E']->['E']>"
+    )
+    assert str(hierarchy["P2"]) == "< Processor ID: P2 Name: Processor 2 ['E']->['C']>"
+    assert (
+        str(hierarchy["P3"])
+        == "< Processor ID: P3 Name: Processor 3 ['E', 'B']->['D']>"
+    )
+
+
+def test_get_spaces(system):
+    spaces = system.get_spaces()
+    assert len(spaces) == 5, "There should be 5 spaces"
+    assert sorted([space.id for space in spaces]) == ["S1", "S2", "S3", "S4", "S5"]
+
+
+def test_get_subsystems(system):
+    subsystems = system.get_subsystems()
+    assert len(subsystems) == 0, "There should be no subsystems"
