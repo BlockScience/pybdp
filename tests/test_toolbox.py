@@ -34,3 +34,32 @@ def test_toolbox_blocks():
     assert str(toolbox.blocks[0]) == "< Block ID: B1 Name: Block 1 ['A', 'E']->['E']>"
     assert str(toolbox.blocks[1]) == "< Block ID: B2 Name: Block 2 ['E']->['C']>"
     assert str(toolbox.blocks[2]) == "< Block ID: B3 Name: Block 3 ['E', 'B']->['D']>"
+
+
+def test_toolbox_mappings():
+    json = {
+        "Spaces": spaces,
+        "Blocks": blocks,
+    }
+    toolbox = Toolbox(json)
+    assert len(toolbox.blocks_map) == 3
+    assert toolbox.blocks_map["B1"].id == "B1"
+    assert toolbox.blocks_map["B2"].id == "B2"
+    assert toolbox.blocks_map["B3"].id == "B3"
+
+    assert len(toolbox.spaces_map) == 5
+    assert toolbox.spaces_map["S1"].id == "S1"
+    assert toolbox.spaces_map["S2"].id == "S2"
+    assert toolbox.spaces_map["S3"].id == "S3"
+    assert toolbox.spaces_map["S4"].id == "S4"
+    assert toolbox.spaces_map["S5"].id == "S5"
+
+    assert len(toolbox.toolbox_map) == 8
+    assert toolbox.toolbox_map["S1"].id == "S1"
+    assert toolbox.toolbox_map["S2"].id == "S2"
+    assert toolbox.toolbox_map["S3"].id == "S3"
+    assert toolbox.toolbox_map["S4"].id == "S4"
+    assert toolbox.toolbox_map["S5"].id == "S5"
+    assert toolbox.toolbox_map["B1"].id == "B1"
+    assert toolbox.toolbox_map["B2"].id == "B2"
+    assert toolbox.toolbox_map["B3"].id == "B3"
