@@ -39,3 +39,45 @@ def test_system_wires(system):
     assert system.wires[0].id == "W1"
     assert system.wires[1].id == "W2"
     assert system.wires[2].id == "W3"
+
+
+def test_get_available_terminals(system):
+    terminals_open_only = system.get_available_terminals(open_only=True)
+    terminals_all = system.get_available_terminals(open_only=False)
+
+    terminals_open_only = [[str(x[0]), x[1], str(x[2])] for x in terminals_open_only]
+    terminals_all = [[str(x[0]), x[1], str(x[2])] for x in terminals_all]
+
+    assert len(terminals_open_only) == 2, "There should be 2 open terminals"
+    assert terminals_open_only == [
+        [
+            "< Processor ID: P2 Name: Processor 2 ['E']->['C']>",
+            0,
+            "< Space ID: S3 Name: C >",
+        ],
+        [
+            "< Processor ID: P3 Name: Processor 3 ['E', 'B']->['D']>",
+            0,
+            "< Space ID: S4 Name: D >",
+        ],
+    ]
+
+    assert len(terminals_all) == 3, "There should be 3 terminals in total"
+
+    assert terminals_all == [
+        [
+            "< Processor ID: P1 Name: Processor 1 ['A', 'E']->['E']>",
+            0,
+            "< Space ID: S5 Name: E >",
+        ],
+        [
+            "< Processor ID: P2 Name: Processor 2 ['E']->['C']>",
+            0,
+            "< Space ID: S3 Name: C >",
+        ],
+        [
+            "< Processor ID: P3 Name: Processor 3 ['E', 'B']->['D']>",
+            0,
+            "< Space ID: S4 Name: D >",
+        ],
+    ]
