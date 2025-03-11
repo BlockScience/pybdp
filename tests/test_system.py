@@ -81,3 +81,23 @@ def test_get_available_terminals(system):
             "< Space ID: S4 Name: D >",
         ],
     ]
+
+
+def test_get_open_ports(system):
+    open_ports = system.get_open_ports()
+    open_ports = [[str(x[0]), x[1], str(x[2])] for x in open_ports]
+
+    assert len(open_ports) == 2, "There should be 2 open ports"
+    print(open_ports)
+    assert open_ports == [
+        [
+            "< Processor ID: P1 Name: Processor 1 ['A', 'E']->['E']>",
+            0,
+            "< Space ID: S1 Name: A >",
+        ],
+        [
+            "< Processor ID: P3 Name: Processor 3 ['E', 'B']->['D']>",
+            1,
+            "< Space ID: S2 Name: B >",
+        ],
+    ]
