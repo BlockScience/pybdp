@@ -1,3 +1,6 @@
+import sys
+
+sys.path.insert(0, "src")
 from common import spaces, blocks, processors, wires, systems, project_json
 from pybdp.space import load_space
 

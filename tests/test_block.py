@@ -1,3 +1,6 @@
+import sys
+
+sys.path.insert(0, "src")
 from common import blocks
 from pybdp.block import load_block
 

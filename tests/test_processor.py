@@ -1,4 +1,7 @@
 import pytest
+import sys
+
+sys.path.insert(0, "src")
 from common import processors
 from pybdp.processor import load_processor
 from test_toolbox import toolbox

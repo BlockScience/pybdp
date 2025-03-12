@@ -1,4 +1,7 @@
 import pytest
+import sys
+
+sys.path.insert(0, "src")
 from common import spaces, blocks
 from pybdp.toolbox import Toolbox
 
