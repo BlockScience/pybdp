@@ -24,8 +24,8 @@ class Block:
             ), f"Space ID {space} referenced in {self.name} codomain not found in spaces"
 
         # Link the spaces
-        self.domain = [self.spaces_map[space] for space in self.domain]
-        self.codomain = [self.spaces_map[space] for space in self.codomain]
+        self.domain = [spaces_map[space] for space in self.domain]
+        self.codomain = [spaces_map[space] for space in self.codomain]
 
     def __repr__(self):
         return "< Block ID: {} Name: {} {}->{}>".format(
