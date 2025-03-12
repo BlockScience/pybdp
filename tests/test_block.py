@@ -20,22 +20,28 @@ def test_load_block(spaces_map):
     assert block.id == "B1"
     assert block.name == "Block 1"
     assert block.description == "Block 1"
-    assert block.domain == ["S1", "S5"]
-    assert block.codomain == ["S5"]
+    assert [str(x) for x in block.domain] == [
+        "< Space ID: S1 Name: A >",
+        "< Space ID: S5 Name: E >",
+    ]
+    assert [str(x) for x in block.codomain] == ["< Space ID: S5 Name: E >"]
     assert block.raw_data == blocks[0]
 
     block = load_block(blocks[1], spaces_map)
     assert block.id == "B2"
     assert block.name == "Block 2"
     assert block.description == None
-    assert block.domain == ["S5"]
-    assert block.codomain == ["S3"]
+    assert [str(x) for x in block.domain] == ["< Space ID: S5 Name: E >"]
+    assert [str(x) for x in block.codomain] == ["< Space ID: S3 Name: C >"]
     assert block.raw_data == blocks[1]
 
     block = load_block(blocks[2], spaces_map)
     assert block.id == "B3"
     assert block.name == "Block 3"
     assert block.description == None
-    assert block.domain == ["S5", "S2"]
-    assert block.codomain == ["S4"]
+    assert [str(x) for x in block.domain] == [
+        "< Space ID: S5 Name: E >",
+        "< Space ID: S2 Name: B >",
+    ]
+    assert [str(x) for x in block.codomain] == ["< Space ID: S4 Name: D >"]
     assert block.raw_data == blocks[2]
