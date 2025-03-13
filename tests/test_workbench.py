@@ -1,4 +1,7 @@
 import pytest
+import sys
+
+sys.path.append("src")
 from common import processors, wires, systems
 from pybdp.workbench import Workbench
 from test_toolbox import toolbox

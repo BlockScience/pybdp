@@ -1,4 +1,7 @@
 import pytest
+import sys
+
+sys.path.insert(0, "src")
 from common import wires, processors
 from pybdp.wire import load_wire
 from test_toolbox import toolbox

@@ -1,4 +1,7 @@
 import pytest
+import sys
+
+sys.path.insert(0, "src")
 from common import systems, processors, wires
 from pybdp.system import load_system
 from pybdp.processor import load_processor
