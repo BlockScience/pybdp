@@ -59,10 +59,12 @@ Workbench:
             self.toolbox, self.workbench
         )
 
-    def add_to_spec(self, spaces=None):
+    def add_to_spec(self, spaces=None, blocks=None):
         new = deepcopy(self.raw_data)
         if spaces is not None:
             new["Toolbox"]["Spaces"].extend(spaces)
+        if blocks is not None:
+            new["Toolbox"]["Blocks"].extend(blocks)
 
         new = Project(new)
         self.__dict__.clear()  # Clears the existing instance's attributes
@@ -77,6 +79,22 @@ Workbench:
         if name is None:
             new["Name"] = id
         self.add_to_spec(spaces=[new])
+
+    def add_block(self, id, name=None, description=None, codomain=None, domain=None):
+        new = {
+            "ID": id,
+            "Name": name,
+            "Description": description,
+            "Codomain": codomain,
+            "Domain": domain,
+        }
+        if name is None:
+            new["Name"] = id
+        if codomain is None:
+            new["Codomain"] = []
+        if domain is None:
+            new["Domain"] = []
+        self.add_to_spec(blocks=[new])
 
 
 def load_project(json: dict):
