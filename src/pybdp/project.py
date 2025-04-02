@@ -3,6 +3,7 @@ from .schema import schema
 from .toolbox import load_toolbox
 from .workbench import load_workbench
 from .convenience import find_duplicates
+from copy import deepcopy
 
 
 class Project:
@@ -57,6 +58,113 @@ Workbench:
 {} >""".format(
             self.toolbox, self.workbench
         )
+
+    def add_to_spec(
+        self, spaces=None, blocks=None, processors=None, wires=None, systems=None
+    ):
+        new = deepcopy(self.raw_data)
+        if spaces is not None:
+            new["Toolbox"]["Spaces"].extend(spaces)
+        if blocks is not None:
+            new["Toolbox"]["Blocks"].extend(blocks)
+        if processors is not None:
+            new["Workbench"]["Processors"].extend(processors)
+        if wires is not None:
+            new["Workbench"]["Wires"].extend(wires)
+        if systems is not None:
+            new["Workbench"]["Systems"].extend(systems)
+
+        new = Project(new)
+        self.__dict__.clear()  # Clears the existing instance's attributes
+        self.__dict__.update(new.__dict__)  # Copies attributes from the new instance
+
+    def add_space(self, id, name=None, description=None):
+        new = {
+            "ID": id,
+            "Name": name,
+            "Description": description,
+        }
+        if name is None:
+            new["Name"] = id
+        self.add_to_spec(spaces=[new])
+
+    def add_block(self, id, name=None, description=None, codomain=None, domain=None):
+        new = {
+            "ID": id,
+            "Name": name,
+            "Description": description,
+            "Codomain": codomain,
+            "Domain": domain,
+        }
+        if name is None:
+            new["Name"] = id
+        if codomain is None:
+            new["Codomain"] = []
+        if domain is None:
+            new["Domain"] = []
+        self.add_to_spec(blocks=[new])
+
+    def add_processor(
+        self,
+        id,
+        parent_id,
+        name=None,
+        description=None,
+        subsystem=None,
+        ports=None,
+        terminals=None,
+    ):
+        new = {
+            "ID": id,
+            "Parent": parent_id,
+            "Name": name,
+            "Description": description,
+            "Subsystem": subsystem,
+            "Ports": ports,
+            "Terminals": terminals,
+        }
+        assert parent_id in self.blocks_map, f"Parent Block ID {parent_id} not found"
+        if name is None:
+            new["Name"] = id
+        if ports is None:
+            new["Ports"] = [x.id for x in self.blocks_map[parent_id].domain]
+        if terminals is None:
+            new["Terminals"] = [x.id for x in self.blocks_map[parent_id].codomain]
+        self.add_to_spec(processors=[new])
+
+    def add_wire(self, id, parent, source, target):
+        new = {
+            "ID": id,
+            "Parent": parent,
+            "Source": source,
+            "Target": target,
+        }
+        self.add_to_spec(wires=[new])
+
+    def add_system(
+        self,
+        id,
+        name=None,
+        processors=None,
+        wires=None,
+        description=None,
+        subsystem=None,
+    ):
+        new = {
+            "ID": id,
+            "Name": name,
+            "Processors": processors,
+            "Wires": wires,
+            "Description": description,
+            "Subsystem": subsystem,
+        }
+        if name is None:
+            new["Name"] = id
+        if processors is None:
+            new["Processors"] = []
+        if wires is None:
+            new["Wires"] = []
+        self.add_to_spec(systems=[new])
 
 
 def load_project(json: dict):
