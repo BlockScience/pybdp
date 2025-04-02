@@ -59,12 +59,14 @@ Workbench:
             self.toolbox, self.workbench
         )
 
-    def add_to_spec(self, spaces=None, blocks=None):
+    def add_to_spec(self, spaces=None, blocks=None, processors=None):
         new = deepcopy(self.raw_data)
         if spaces is not None:
             new["Toolbox"]["Spaces"].extend(spaces)
         if blocks is not None:
             new["Toolbox"]["Blocks"].extend(blocks)
+        if processors is not None:
+            new["Workbench"]["Processors"].extend(processors)
 
         new = Project(new)
         self.__dict__.clear()  # Clears the existing instance's attributes
@@ -95,6 +97,34 @@ Workbench:
         if domain is None:
             new["Domain"] = []
         self.add_to_spec(blocks=[new])
+
+    def add_processor(
+        self,
+        id,
+        parent_id,
+        name=None,
+        description=None,
+        subsystem=None,
+        ports=None,
+        terminals=None,
+    ):
+        new = {
+            "ID": id,
+            "Parent": parent_id,
+            "Name": name,
+            "Description": description,
+            "Subsystem": subsystem,
+            "Ports": ports,
+            "Terminals": terminals,
+        }
+        assert parent_id in self.blocks_map, f"Parent Block ID {parent_id} not found"
+        if name is None:
+            new["Name"] = id
+        if ports is None:
+            new["Ports"] = [x.id for x in self.blocks_map[parent_id].domain]
+        if terminals is None:
+            new["Terminals"] = [x.id for x in self.blocks_map[parent_id].codomain]
+        self.add_to_spec(processors=[new])
 
 
 def load_project(json: dict):
