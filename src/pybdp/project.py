@@ -59,7 +59,9 @@ Workbench:
             self.toolbox, self.workbench
         )
 
-    def add_to_spec(self, spaces=None, blocks=None, processors=None, wires=None):
+    def add_to_spec(
+        self, spaces=None, blocks=None, processors=None, wires=None, systems=None
+    ):
         new = deepcopy(self.raw_data)
         if spaces is not None:
             new["Toolbox"]["Spaces"].extend(spaces)
@@ -69,6 +71,8 @@ Workbench:
             new["Workbench"]["Processors"].extend(processors)
         if wires is not None:
             new["Workbench"]["Wires"].extend(wires)
+        if systems is not None:
+            new["Workbench"]["Systems"].extend(systems)
 
         new = Project(new)
         self.__dict__.clear()  # Clears the existing instance's attributes
@@ -136,6 +140,31 @@ Workbench:
             "Target": target,
         }
         self.add_to_spec(wires=[new])
+
+    def add_system(
+        self,
+        id,
+        name=None,
+        processors=None,
+        wires=None,
+        description=None,
+        subsystem=None,
+    ):
+        new = {
+            "ID": id,
+            "Name": name,
+            "Processors": processors,
+            "Wires": wires,
+            "Description": description,
+            "Subsystem": subsystem,
+        }
+        if name is None:
+            new["Name"] = id
+        if processors is None:
+            new["Processors"] = []
+        if wires is None:
+            new["Wires"] = []
+        self.add_to_spec(systems=[new])
 
 
 def load_project(json: dict):
