@@ -62,7 +62,11 @@ Workbench:
     def add_to_spec(self, spaces=None):
         new = deepcopy(self.raw_data)
         if spaces is not None:
-            new["Toolbox"]["Spaces"].append(spaces)
+            new["Toolbox"]["Spaces"].extend(spaces)
+
+        new = Project(new)
+        self.__dict__.clear()  # Clears the existing instance's attributes
+        self.__dict__.update(new.__dict__)  # Copies attributes from the new instance
 
     def add_space(self, id, name=None, description=None):
         new = {
