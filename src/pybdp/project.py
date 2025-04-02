@@ -3,6 +3,7 @@ from .schema import schema
 from .toolbox import load_toolbox
 from .workbench import load_workbench
 from .convenience import find_duplicates
+from copy import deepcopy
 
 
 class Project:
@@ -57,6 +58,21 @@ Workbench:
 {} >""".format(
             self.toolbox, self.workbench
         )
+
+    def add_to_spec(self, spaces=None):
+        new = deepcopy(self.raw_data)
+        if spaces is not None:
+            new["Toolbox"]["Spaces"].append(spaces)
+
+    def add_space(self, id, name=None, description=None):
+        new = {
+            "ID": id,
+            "Name": name,
+            "Description": description,
+        }
+        if name is None:
+            new["Name"] = id
+        self.add_to_spec(spaces=[new])
 
 
 def load_project(json: dict):
