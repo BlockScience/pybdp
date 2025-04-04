@@ -219,10 +219,26 @@ class System:
     def get_subsystems(self):
         return [x.subsystem for x in self.processors if not x.is_primitive()]
 
-    def make_processor_lazy(self):
-        # Get open ports and terminals
-        ports = self.get_open_ports()
-        terminals = self.get_available_terminals(open_only=True)
+    def make_processor_lazy(self, ports=None, terminals=None):
+        if ports:
+            hold = []
+            for entry in ports:
+                processor = self.processors_map[entry[0]]
+                index = entry[1]
+                hold.append([processor, index, processor.ports[index]])
+            ports = hold
+        else:
+            ports = self.get_open_ports()
+
+        if terminals:
+            hold = []
+            for entry in terminals:
+                processor = self.processors_map[entry[0]]
+                index = entry[1]
+                hold.append([processor, index, processor.terminals[index]])
+            terminals = hold
+        else:
+            terminals = self.get_available_terminals(open_only=True)
 
         # Get spaces
         domain = list(map(lambda x: x[2].id, ports))
