@@ -219,7 +219,15 @@ class System:
     def get_subsystems(self):
         return [x.subsystem for x in self.processors if not x.is_primitive()]
 
-    def make_processor_lazy(self, ports=None, terminals=None):
+    def make_processor_lazy(
+        self,
+        ports=None,
+        terminals=None,
+        block_id=None,
+        processor_id=None,
+        block_name=None,
+        block_description=None,
+    ):
         if ports:
             hold = []
             for entry in ports:
@@ -244,15 +252,22 @@ class System:
         domain = list(map(lambda x: x[2].id, ports))
         codomain = list(map(lambda x: x[2].id, terminals))
 
-        block_id = self.id + "-CP Block"
-        processor_id = self.id + "-CP"
+        if not block_id:
+            block_id = self.id + "-CP Block"
+        if not processor_id:
+            processor_id = self.id + "-CP"
+
+        if not block_name:
+            block_name = self.name + "-CP Block"
+        if not block_description:
+            block_description = "A lazy loaded composite processor block for {}".format(
+                self.name
+            )
 
         block_scaffold = {
             "ID": block_id,
-            "Name": self.name + "-CP Block",
-            "Description": "A lazy loaded composite processor block for {}".format(
-                self.name
-            ),
+            "Name": block_name,
+            "Description": block_description,
             "Domain": domain,
             "Codomain": codomain,
         }
