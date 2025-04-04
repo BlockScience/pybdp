@@ -227,6 +227,8 @@ class System:
         processor_id=None,
         block_name=None,
         block_description=None,
+        processor_name=None,
+        processor_description=None,
     ):
         if ports:
             hold = []
@@ -264,6 +266,13 @@ class System:
                 self.name
             )
 
+        if not processor_name:
+            processor_name = self.name + "-CP"
+        if not processor_description:
+            processor_description = "A lazy loaded composite processor for {}".format(
+                self.name
+            )
+
         block_scaffold = {
             "ID": block_id,
             "Name": block_name,
@@ -281,10 +290,8 @@ class System:
 
         processor_scaffold = {
             "ID": processor_id,
-            "Name": self.name + "-CP",
-            "Description": "A lazy loaded composite processor block for {}".format(
-                self.name
-            ),
+            "Name": processor_name,
+            "Description": processor_description,
             "Parent": block_id,
             "Ports": domain,
             "Terminals": codomain,
