@@ -166,6 +166,18 @@ Workbench:
             new["Wires"] = []
         self.add_to_spec(systems=[new])
 
+    def copy_add_wire(self, wire, update_dict):
+        new = deepcopy(wire.raw_data)
+        assert "ID" in update_dict, "New ID is required to update wire"
+        new["ID"] = update_dict["ID"]
+        if "Parent" in update_dict:
+            new["Parent"] = update_dict["Parent"]
+        if "Source" in update_dict:
+            new["Source"] = update_dict["Source"]
+        if "Target" in update_dict:
+            new["Target"] = update_dict["Target"]
+        self.add_to_spec(wires=[new])
+
 
 def load_project(json: dict):
     validate(json, schema)

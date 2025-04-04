@@ -219,24 +219,66 @@ class System:
     def get_subsystems(self):
         return [x.subsystem for x in self.processors if not x.is_primitive()]
 
-    def make_processor_lazy(self):
-        # Get open ports and terminals
-        ports = self.get_open_ports()
-        terminals = self.get_available_terminals(open_only=True)
+    def make_processor_lazy(
+        self,
+        ports=None,
+        terminals=None,
+        block_id=None,
+        processor_id=None,
+        block_name=None,
+        block_description=None,
+        processor_name=None,
+        processor_description=None,
+        add=False,
+        project=None,
+    ):
+        if ports:
+            hold = []
+            for entry in ports:
+                processor = self.processors_map[entry[0]]
+                index = entry[1]
+                hold.append([processor, index, processor.ports[index]])
+            ports = hold
+        else:
+            ports = self.get_open_ports()
+
+        if terminals:
+            hold = []
+            for entry in terminals:
+                processor = self.processors_map[entry[0]]
+                index = entry[1]
+                hold.append([processor, index, processor.terminals[index]])
+            terminals = hold
+        else:
+            terminals = self.get_available_terminals(open_only=True)
 
         # Get spaces
         domain = list(map(lambda x: x[2].id, ports))
         codomain = list(map(lambda x: x[2].id, terminals))
 
-        block_id = self.id + "-CP Block"
-        processor_id = self.id + "-CP"
+        if not block_id:
+            block_id = self.id + "-CP Block"
+        if not processor_id:
+            processor_id = self.id + "-CP"
+
+        if not block_name:
+            block_name = self.name + "-CP Block"
+        if not block_description:
+            block_description = "A lazy loaded composite processor block for {}".format(
+                self.name
+            )
+
+        if not processor_name:
+            processor_name = self.name + "-CP"
+        if not processor_description:
+            processor_description = "A lazy loaded composite processor for {}".format(
+                self.name
+            )
 
         block_scaffold = {
             "ID": block_id,
-            "Name": self.name + "-CP Block",
-            "Description": "A lazy loaded composite processor block for {}".format(
-                self.name
-            ),
+            "Name": block_name,
+            "Description": block_description,
             "Domain": domain,
             "Codomain": codomain,
         }
@@ -250,10 +292,8 @@ class System:
 
         processor_scaffold = {
             "ID": processor_id,
-            "Name": self.name + "-CP",
-            "Description": "A lazy loaded composite processor block for {}".format(
-                self.name
-            ),
+            "Name": processor_name,
+            "Description": processor_description,
             "Parent": block_id,
             "Ports": domain,
             "Terminals": codomain,
@@ -264,13 +304,19 @@ class System:
             },
         }
 
-        print("-----Add the following to your JSON-----")
-        print()
-        print("Add to blocks:")
-        pprint(block_scaffold)
-        print()
-        print("Add to processors:")
-        pprint(processor_scaffold)
+        if add:
+            assert project, "Need to pass the project in for adding directly"
+            project.add_to_spec(
+                blocks=[block_scaffold], processors=[processor_scaffold]
+            )
+        else:
+            print("-----Add the following to your JSON-----")
+            print()
+            print("Add to blocks:")
+            pprint(block_scaffold)
+            print()
+            print("Add to processors:")
+            pprint(processor_scaffold)
 
     def create_mermaid_graphic(
         self,
