@@ -229,6 +229,8 @@ class System:
         block_description=None,
         processor_name=None,
         processor_description=None,
+        add=False,
+        project=None,
     ):
         if ports:
             hold = []
@@ -302,13 +304,19 @@ class System:
             },
         }
 
-        print("-----Add the following to your JSON-----")
-        print()
-        print("Add to blocks:")
-        pprint(block_scaffold)
-        print()
-        print("Add to processors:")
-        pprint(processor_scaffold)
+        if add:
+            assert project, "Need to pass the project in for adding directly"
+            project.add_to_spec(
+                blocks=[block_scaffold], processors=[processor_scaffold]
+            )
+        else:
+            print("-----Add the following to your JSON-----")
+            print()
+            print("Add to blocks:")
+            pprint(block_scaffold)
+            print()
+            print("Add to processors:")
+            pprint(processor_scaffold)
 
     def create_mermaid_graphic(
         self,
