@@ -4,6 +4,7 @@ from .toolbox import load_toolbox
 from .workbench import load_workbench
 from .convenience import find_duplicates
 from copy import deepcopy
+import json
 
 
 class Project:
@@ -177,6 +178,60 @@ Workbench:
         if "Target" in update_dict:
             new["Target"] = update_dict["Target"]
         self.add_to_spec(wires=[new])
+
+    def add_wires(self, wires, auto_increment=False):
+        if auto_increment:
+            mx = 0
+            for wire in self.wires:
+                w_id = wire.id
+                if w_id.startswith("W"):
+                    try:
+                        mx = max(mx, int(w_id[1:]))
+                    except ValueError:
+                        pass
+            mx += 1
+            for wire in wires:
+                wire["ID"] = "W" + str(mx)
+                mx += 1
+        self.add_to_spec(wires=wires)
+
+    def update_spec(self, processors=None):
+        new = deepcopy(self.raw_data)
+        if processors is not None:
+            for p in processors:
+                record = [x for x in new["Workbench"]["Processors"] if x["ID"] == p][0]
+                d = processors[p]
+                for key in d:
+                    record[key] = d[key]
+
+        new = Project(new)
+        self.__dict__.clear()  # Clears the existing instance's attributes
+        self.__dict__.update(new.__dict__)  # Copies attributes from the new instance
+
+    def attach_subsystem(self, processor, system, port_mappings, terminal_mappings):
+        assert (
+            processor.is_primitive()
+        ), f"Processor {processor.id} is not a primitive processor"
+
+        self.update_spec(
+            processors={
+                processor.id: {
+                    "Subsystem": {
+                        "System ID": system.id,
+                        "Port Mappings": port_mappings,
+                        "Terminal Mappings": terminal_mappings,
+                    }
+                }
+            }
+        )
+
+    def save(self, path):
+        """
+        Save the project to a JSON file.
+        """
+
+        with open(path, "w") as f:
+            json.dump(self.raw_data, f, indent=4)
 
 
 def load_project(json: dict):

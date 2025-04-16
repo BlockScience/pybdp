@@ -1,3 +1,6 @@
+from IPython.display import Markdown, display
+
+
 class Processor:
 
     def __init__(self, json: dict, blocks_map: dict, spaces_map: dict):
@@ -261,6 +264,88 @@ graph LR
             return None
         else:
             return self.subsystem
+
+    def display_mermaid_graphic(self, composite=False):
+        if composite:
+            display(Markdown(self.create_mermaid_graphic_composite()[0]))
+        else:
+            display(Markdown(self.create_mermaid_graphic()[0]))
+
+    def find_potential_wires(self, processor2):
+        port_wires = []
+        terminal_wires = []
+
+        d = {}
+        for i, port in enumerate(self.ports):
+            if port.id not in d:
+                d[port.id] = [i]
+            else:
+                d[port.id].append(i)
+        for i, terminal in enumerate(processor2.terminals):
+            if terminal.id in d:
+                for j in d[terminal.id]:
+                    port_wires.append(
+                        {
+                            "Parent": terminal.id,
+                            "Source": {"Processor": processor2.id, "Index": i},
+                            "Target": {"Processor": self.id, "Index": j},
+                        }
+                    )
+
+        d = {}
+        for i, terminal in enumerate(self.terminals):
+            if terminal.id not in d:
+                d[terminal.id] = [i]
+            else:
+                d[terminal.id].append(i)
+        for i, port in enumerate(processor2.ports):
+            if port.id in d:
+                for j in d[port.id]:
+                    terminal_wires.append(
+                        {
+                            "Parent": port.id,
+                            "Source": {"Processor": self.id, "Index": j},
+                            "Target": {"Processor": processor2.id, "Index": i},
+                        }
+                    )
+        return {"Ports": port_wires, "Terminals": terminal_wires}
+
+    def find_potential_subsystems_mappings(self, system):
+        port_mappings = []
+        terminal_mappings = []
+
+        possible_ports = system.get_open_ports()
+        possible_terminals = system.get_available_terminals()
+
+        possible_ports2 = {}
+        possible_terminals2 = {}
+        for p in possible_ports:
+            space = p[2].id
+            data = {"Processor": p[0].id, "Index": p[1]}
+            if space in possible_ports2:
+                possible_ports2[space].append(data)
+            else:
+                possible_ports2[space] = [data]
+        for p in possible_terminals:
+            space = p[2].id
+            data = {"Processor": p[0].id, "Index": p[1]}
+            if space in possible_terminals2:
+                possible_terminals2[space].append(data)
+            else:
+                possible_terminals2[space] = [data]
+
+        for i, port in enumerate(self.ports):
+            if port.id in possible_ports2:
+                port_mappings.append(possible_ports2[port.id])
+            else:
+                port_mappings.append([])
+        for i, terminal in enumerate(self.terminals):
+            if terminal.id in possible_terminals2:
+                terminal_mappings.append(possible_terminals2[terminal.id])
+            else:
+                terminal_mappings.append([])
+
+        return {"Port Mappings": port_mappings, "Terminal Mappings": terminal_mappings}
 
 
 def load_processor(json, blocks_map, spaces_map):

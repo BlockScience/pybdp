@@ -1,5 +1,6 @@
 from .convenience import find_duplicates
 from pprint import pprint
+from IPython.display import Markdown, display
 
 
 class System:
@@ -372,6 +373,12 @@ graph LR
             )
 
         return out, processor_i, system_i
+
+    def display_mermaid_graphic(self, composite=False):
+        if composite:
+            display(Markdown(self.create_mermaid_graphic(recursive=True)[0]))
+        else:
+            display(Markdown(self.create_mermaid_graphic()[0]))
 
 
 def load_system(json, processors_map, wires_map):
