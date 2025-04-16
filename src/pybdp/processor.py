@@ -271,6 +271,28 @@ graph LR
         else:
             display(Markdown(self.create_mermaid_graphic_composite()[0]))
 
+    def find_potential_wires(self, processor2):
+        port_wires = []
+        terminal_wires = []
+
+        d = {}
+        for i, port in enumerate(self.ports):
+            if port.id not in d:
+                d[port.id] = [i]
+            else:
+                d[port.id].append(i)
+        for i, terminal in enumerate(processor2.terminals):
+            if terminal.id in d:
+                for j in d[terminal.id]:
+                    port_wires.append(
+                        {
+                            "Parent": terminal.id,
+                            "Source": {"Processor": processor2.id, "Index": i},
+                            "Target": {"Processor": self.id, "Index": j},
+                        }
+                    )
+        return {"Ports": port_wires, "Terminals": terminal_wires}
+
 
 def load_processor(json, blocks_map, spaces_map):
     return Processor(json, blocks_map, spaces_map)
