@@ -4,6 +4,7 @@ from .toolbox import load_toolbox
 from .workbench import load_workbench
 from .convenience import find_duplicates
 from copy import deepcopy
+import json
 
 
 class Project:
@@ -207,7 +208,7 @@ Workbench:
         self.__dict__.clear()  # Clears the existing instance's attributes
         self.__dict__.update(new.__dict__)  # Copies attributes from the new instance
 
-    def attatch_subsystem(self, processor, system, port_mappings, terminal_mappings):
+    def attach_subsystem(self, processor, system, port_mappings, terminal_mappings):
         assert (
             processor.is_primitive()
         ), f"Processor {processor.id} is not a primitive processor"
@@ -222,7 +223,15 @@ Workbench:
                     }
                 }
             }
-        ),
+        )
+
+    def save(self, path):
+        """
+        Save the project to a JSON file.
+        """
+
+        with open(path, "w") as f:
+            json.dump(self.raw_data, f, indent=4)
 
 
 def load_project(json: dict):
