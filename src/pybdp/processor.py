@@ -267,9 +267,9 @@ graph LR
 
     def display_mermaid_graphic(self, composite=False):
         if composite:
-            display(Markdown(self.create_mermaid_graphic()[0]))
-        else:
             display(Markdown(self.create_mermaid_graphic_composite()[0]))
+        else:
+            display(Markdown(self.create_mermaid_graphic()[0]))
 
     def find_potential_wires(self, processor2):
         port_wires = []
