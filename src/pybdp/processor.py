@@ -1,3 +1,6 @@
+from IPython.display import Markdown, display
+
+
 class Processor:
 
     def __init__(self, json: dict, blocks_map: dict, spaces_map: dict):
@@ -261,6 +264,12 @@ graph LR
             return None
         else:
             return self.subsystem
+
+    def display_mermaid_graphic(self, composite=False):
+        if composite:
+            display(Markdown(self.create_mermaid_graphic()[0]))
+        else:
+            display(Markdown(self.create_mermaid_graphic_composite()[0]))
 
 
 def load_processor(json, blocks_map, spaces_map):
