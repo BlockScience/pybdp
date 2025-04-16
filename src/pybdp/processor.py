@@ -310,6 +310,25 @@ graph LR
                     )
         return {"Ports": port_wires, "Terminals": terminal_wires}
 
+    def find_potential_subsystems_mappings(self, system):
+        port_mappings = []
+        terminal_mappings = []
+
+        possible_ports = system.get_open_ports()
+        possible_terminals = system.get_available_terminals()
+
+        possible_ports2 = {}
+        possible_terminals2 = {}
+        for p in possible_ports:
+            space = p[2].id
+            data = {"Processor": p[0].id, "Index": p[1]}
+            if space in possible_ports2:
+                possible_ports2[space].append(data)
+            else:
+                possible_ports2[space] = [data]
+
+        return {"Port Mappings": port_mappings, "Terminal Mappings": terminal_mappings}
+
 
 def load_processor(json, blocks_map, spaces_map):
     return Processor(json, blocks_map, spaces_map)
