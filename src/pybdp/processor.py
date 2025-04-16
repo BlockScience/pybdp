@@ -291,6 +291,23 @@ graph LR
                             "Target": {"Processor": self.id, "Index": j},
                         }
                     )
+
+        d = {}
+        for i, terminal in enumerate(self.terminals):
+            if terminal.id not in d:
+                d[terminal.id] = [i]
+            else:
+                d[terminal.id].append(i)
+        for i, port in enumerate(processor2.ports):
+            if port.id in d:
+                for j in d[port.id]:
+                    terminal_wires.append(
+                        {
+                            "Parent": terminal.id,
+                            "Source": {"Processor": self.id, "Index": j},
+                            "Target": {"Processor": processor2.id, "Index": i},
+                        }
+                    )
         return {"Ports": port_wires, "Terminals": terminal_wires}
 
 
