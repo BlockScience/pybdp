@@ -194,6 +194,36 @@ Workbench:
                 mx += 1
         self.add_to_spec(wires=wires)
 
+    def update_spec(self, processors=None):
+        new = deepcopy(self.raw_data)
+        if processors is not None:
+            for p in processors:
+                record = [x for x in new["Workbench"]["Processors"] if x["ID"] == p][0]
+                d = processors[p]
+                for key in d:
+                    record[key] = d[key]
+
+        new = Project(new)
+        self.__dict__.clear()  # Clears the existing instance's attributes
+        self.__dict__.update(new.__dict__)  # Copies attributes from the new instance
+
+    def attatch_subsystem(self, processor, system, port_mappings, terminal_mappings):
+        assert (
+            processor.is_primitive()
+        ), f"Processor {processor.id} is not a primitive processor"
+
+        self.update_spec(
+            processors={
+                processor.id: {
+                    "Subsystem": {
+                        "System ID": system.id,
+                        "Port Mappings": port_mappings,
+                        "Terminal Mappings": terminal_mappings,
+                    }
+                }
+            }
+        ),
+
 
 def load_project(json: dict):
     validate(json, schema)
