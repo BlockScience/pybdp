@@ -326,6 +326,24 @@ graph LR
                 possible_ports2[space].append(data)
             else:
                 possible_ports2[space] = [data]
+        for p in possible_terminals:
+            space = p[2].id
+            data = {"Processor": p[0].id, "Index": p[1]}
+            if space in possible_terminals2:
+                possible_terminals2[space].append(data)
+            else:
+                possible_terminals2[space] = [data]
+
+        for i, port in enumerate(self.ports):
+            if port.id in possible_ports2:
+                port_mappings.append(possible_ports2[port.id])
+            else:
+                port_mappings.append([])
+        for i, terminal in enumerate(self.terminals):
+            if terminal.id in possible_terminals2:
+                terminal_mappings.append(possible_terminals2[terminal.id])
+            else:
+                terminal_mappings.append([])
 
         return {"Port Mappings": port_mappings, "Terminal Mappings": terminal_mappings}
 
