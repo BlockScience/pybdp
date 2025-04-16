@@ -178,6 +178,22 @@ Workbench:
             new["Target"] = update_dict["Target"]
         self.add_to_spec(wires=[new])
 
+    def add_wires(self, wires, auto_increment=False):
+        if auto_increment:
+            mx = 0
+            for wire in self.wires:
+                w_id = wire.id
+                if w_id.startswith("W"):
+                    try:
+                        mx = max(mx, int(w_id[1:]))
+                    except ValueError:
+                        pass
+            mx += 1
+            for wire in wires:
+                wire["ID"] = "W" + str(mx)
+                mx += 1
+        self.add_to_spec(wires=wires)
+
 
 def load_project(json: dict):
     validate(json, schema)

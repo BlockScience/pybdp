@@ -303,7 +303,7 @@ graph LR
                 for j in d[port.id]:
                     terminal_wires.append(
                         {
-                            "Parent": terminal.id,
+                            "Parent": port.id,
                             "Source": {"Processor": self.id, "Index": j},
                             "Target": {"Processor": processor2.id, "Index": i},
                         }
