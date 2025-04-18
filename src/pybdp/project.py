@@ -211,6 +211,23 @@ Workbench:
                     wire, {"Source": {"Processor": new["ID"]}}, auto_increment=True
                 )
 
+    def copy_add_system(
+        self, system, update_dict, add_dictionary=None, remove_dictionary=None
+    ):
+        new = deepcopy(system.raw_data)
+        assert "ID" in update_dict, "New ID is required to update system"
+        new["ID"] = update_dict["ID"]
+        for key in update_dict:
+            new[key] = update_dict[key]
+        if add_dictionary is not None:
+            for key in add_dictionary:
+                new[key].extend(add_dictionary[key])
+        if remove_dictionary is not None:
+            for key in remove_dictionary:
+                for item in remove_dictionary[key]:
+                    new[key].remove(item)
+        self.add_to_spec(systems=[new])
+
     def find_next_wire_id(self):
         mx = 0
         for wire in self.wires:
