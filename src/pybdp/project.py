@@ -179,6 +179,14 @@ Workbench:
             new["Target"] = update_dict["Target"]
         self.add_to_spec(wires=[new])
 
+    def copy_add_processor(self, processor, update_dict, copy_wires=False):
+        new = deepcopy(processor.raw_data)
+        assert "ID" in update_dict, "New ID is required to update processor"
+        new["ID"] = update_dict["ID"]
+        for key in update_dict:
+            new[key] = update_dict[key]
+        self.add_to_spec(processors=[new])
+
     def add_wires(self, wires, auto_increment=False):
         if auto_increment:
             mx = 0
