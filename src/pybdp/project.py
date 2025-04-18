@@ -199,7 +199,14 @@ Workbench:
         assert "ID" in update_dict, "New ID is required to update processor"
         new["ID"] = update_dict["ID"]
         for key in update_dict:
-            new[key] = update_dict[key]
+            if key in new:
+                if isinstance(update_dict[key], dict):
+                    for key2 in update_dict[key]:
+                        new[key][key2] = update_dict[key][key2]
+                else:
+                    new[key] = update_dict[key]
+            else:
+                new[key] = update_dict[key]
         self.add_to_spec(processors=[new])
         if copy_wires:
             for wire in processor.port_wires:
