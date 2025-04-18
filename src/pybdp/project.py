@@ -187,9 +187,11 @@ Workbench:
         if "Parent" in update_dict:
             new["Parent"] = update_dict["Parent"]
         if "Source" in update_dict:
-            new["Source"] = update_dict["Source"]
+            for key in update_dict["Source"]:
+                new["Source"][key] = update_dict["Source"][key]
         if "Target" in update_dict:
-            new["Target"] = update_dict["Target"]
+            for key in update_dict["Target"]:
+                new["Target"][key] = update_dict["Target"][key]
         self.add_to_spec(wires=[new])
 
     def copy_add_processor(self, processor, update_dict, copy_wires=False):
