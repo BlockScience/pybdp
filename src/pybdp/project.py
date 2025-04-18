@@ -177,10 +177,13 @@ Workbench:
             new["Wires"] = []
         self.add_to_spec(systems=[new])
 
-    def copy_add_wire(self, wire, update_dict):
+    def copy_add_wire(self, wire, update_dict, auto_increment=False):
         new = deepcopy(wire.raw_data)
-        assert "ID" in update_dict, "New ID is required to update wire"
-        new["ID"] = update_dict["ID"]
+        if auto_increment:
+            new["ID"] = self.find_next_wire_id()
+        else:
+            assert "ID" in update_dict, "New ID is required to update wire"
+            new["ID"] = update_dict["ID"]
         if "Parent" in update_dict:
             new["Parent"] = update_dict["Parent"]
         if "Source" in update_dict:
@@ -196,6 +199,26 @@ Workbench:
         for key in update_dict:
             new[key] = update_dict[key]
         self.add_to_spec(processors=[new])
+        if copy_wires:
+            for wire in processor.port_wires:
+                self.copy_add_wire(
+                    wire, {"Target": {"Processor": new["ID"]}}, auto_increment=True
+                )
+            for wire in processor.terminal_wires:
+                self.copy_add_wire(
+                    wire, {"Source": {"Processor": new["ID"]}}, auto_increment=True
+                )
+
+    def find_next_wire_id(self):
+        mx = 0
+        for wire in self.wires:
+            w_id = wire.id
+            if w_id.startswith("W"):
+                try:
+                    mx = max(mx, int(w_id[1:]))
+                except ValueError:
+                    pass
+        return "W" + str(mx + 1)
 
     def add_wires(self, wires, auto_increment=False):
         if auto_increment:
