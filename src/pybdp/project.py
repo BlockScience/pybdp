@@ -40,6 +40,16 @@ class Project:
         for processor in self.processors:
             processor._load_subsytem(self.systems_map, self.processors_map)
 
+        # Map out the wires to the processors
+        for wire in self.wires:
+            source = wire.source["Processor"]
+            target = wire.target["Processor"]
+
+            source.terminal_wires.append(wire)
+            target.port_wires.append(wire)
+            source.wires.append(wire)
+            target.wires.append(wire)
+
     def _validate_unique_ids(self):
         duplicates = find_duplicates(
             self.blocks + self.spaces + self.processors + self.wires + self.systems
