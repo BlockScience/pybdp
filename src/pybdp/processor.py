@@ -15,6 +15,9 @@ class Processor:
         self._load_parent(json["Parent"], blocks_map)
         self._load_ports(json["Ports"], spaces_map)
         self._load_terminals(json["Terminals"], spaces_map)
+        self.port_wires = []
+        self.terminal_wires = []
+        self.wires = []
 
         if "Subsystem" in json:
             # This will be processed in after the project is loaded
